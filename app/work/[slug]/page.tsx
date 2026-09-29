@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight } from "@/components/icons";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { TechChip } from "@/components/tech-icon";
 import { getProject, projects, type FlowNode, type Project } from "@/content/projects";
 
 const wrap = "mx-auto w-full max-w-[1440px] px-5 md:px-12 xl:px-24";
@@ -121,9 +122,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
                   <dt className="text-[13px] text-muted">{t.layer}</dt>
                   <dd className="flex flex-wrap gap-2">
                     {t.items.map((i) => (
-                      <span key={i} className="rounded-full bg-paper px-3 py-1.5 text-[13px] leading-5">
-                        {i}
-                      </span>
+                      <TechChip key={i} label={i} />
                     ))}
                   </dd>
                 </div>

@@ -1,9 +1,10 @@
 // Run: pnpm check
 import assert from "node:assert/strict";
-import { roleChecks } from "../content/profile.ts";
+import { roleChecks, toolbox } from "../content/profile.ts";
 import { projects } from "../content/projects.ts";
 import { buildChatPrompt } from "./chat-prompt.ts";
 import { chatSchema, contactSchema } from "./schemas.ts";
+import { fallbackIcon, iconFor } from "./tech-icons.ts";
 
 const prompt = buildChatPrompt();
 for (const p of projects) {
@@ -49,5 +50,10 @@ assert.ok(!chatSchema.safeParse({ messages: [turn("hi"), turn("hello", "assistan
 for (const p of projects) {
   assert.ok(p.images.card.src.startsWith(`/projects/${p.slug}/`), `${p.slug} card path`);
 }
+
+// Every stack chip must resolve to a real icon, not the fallback.
+const chips = [...projects.flatMap((p) => p.techStack.flatMap((t) => t.items)), ...toolbox.flatMap((t) => t.items)];
+const unmapped = chips.filter((c) => iconFor(c) === fallbackIcon);
+assert.deepEqual(unmapped, [], `stack items without an icon: ${unmapped.join(", ")}`);
 
 console.log("site checks passed");

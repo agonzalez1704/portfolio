@@ -5,6 +5,7 @@ import { ContactForm } from "@/components/contact-form";
 import { ArrowDown, ArrowUpRight, Check } from "@/components/icons";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { TechChip } from "@/components/tech-icon";
 import { experience, method, profile, releaseChecks, roleChecks, security, sideProjects, toolbox } from "@/content/profile";
 import { getProject } from "@/content/projects";
 
@@ -219,8 +220,8 @@ function Toolbox() {
             <h3 className="text-[28px] leading-8 font-light tracking-[-0.02em]">{t.layer}</h3>
             <ul className="flex flex-wrap gap-2">
               {t.items.map((item) => (
-                <li key={item} className="rounded-full bg-paper px-3 py-1.5 text-[13px] leading-5">
-                  {item}
+                <li key={item}>
+                  <TechChip label={item} />
                 </li>
               ))}
             </ul>
