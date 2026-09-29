@@ -177,6 +177,34 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
           </div>
         </section>
 
+        <section className="bg-white">
+          <div className={`${wrap} grid gap-14 py-16 md:py-30 ${p.security.length ? "lg:grid-cols-2 lg:gap-24" : ""}`}>
+            {p.security.length > 0 && (
+              <div className="flex flex-col gap-10">
+                <h2 className={h2}>Security</h2>
+                <div className="flex flex-col gap-8">
+                  {p.security.map((n) => (
+                    <Note key={n.title} {...n} />
+                  ))}
+                </div>
+              </div>
+            )}
+            <div className="flex flex-col gap-10">
+              <h2 className={h2}>Before it reaches production</h2>
+              <ol className={`grid gap-6 ${p.security.length ? "" : "md:grid-cols-2 md:gap-x-12"}`}>
+                {p.release.map((r, i) => (
+                  <li key={r} className="grid grid-cols-[40px_minmax(0,1fr)] gap-4">
+                    <span className="text-[28px] leading-8 font-light tracking-[-0.02em] text-muted tabular-nums">
+                      {i + 1}
+                    </span>
+                    <p className="pt-1 text-[15px] leading-6 text-body text-pretty">{r}</p>
+                  </li>
+                ))}
+              </ol>
+            </div>
+          </div>
+        </section>
+
         {p.openItems.length > 0 && (
           <section className={`${wrap} flex flex-col gap-6 pb-16 md:pb-30`}>
             <h2 className={h2}>What is not done yet</h2>

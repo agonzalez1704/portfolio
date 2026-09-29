@@ -32,6 +32,10 @@ export type Project = {
   access: { title: string; body: string[]; items: { name: string; note: string }[] } | null;
   agents: { title: string; notes: Note[] };
   decisions: Note[];
+  // Empty = do not present security for this project yet.
+  security: Note[];
+  // What happens before a change reaches production.
+  release: string[];
   openItems: string[];
 };
 
@@ -138,6 +142,30 @@ export const projects: Project[] = [
         body: "Images cache for 30 days and ship as AVIF and WebP to limit storage egress.",
       },
     ],
+    security: [
+      {
+        title: "Every webhook is signed",
+        body: "One shared HMAC-SHA256 check, compared in constant time, guards every inbound webhook. The module is server-only.",
+      },
+      {
+        title: "Limits enforced by the database",
+        body: "Rate limits live in Postgres, and each session has a cap on pending orders, so abuse cannot hold stock hostage.",
+      },
+      {
+        title: "Scheduled jobs need a secret",
+        body: "Cron endpoints reject any request without the bearer secret, so nobody can trigger reminders or expirations from outside.",
+      },
+      {
+        title: "AI cannot write on its own",
+        body: "The admin chat and MCP tools only read. A proposed change runs after a person confirms it.",
+      },
+    ],
+    release: [
+      "A written runbook per brand: new Supabase project, migrations pushed with supabase db push, cron jobs confirmed in SQL",
+      "Demo seed data is skipped on real launches; the client loads real products through the admin",
+      "Production build before every deploy",
+      "Smoke checks with curl against the live domain after deploy",
+    ],
     openItems: [
       "This repository has no automated tests yet. Correctness rests on database constraints, row locks and review.",
     ],
@@ -239,10 +267,6 @@ export const projects: Project[] = [
         body: "The card is authorized when a job is requested. Only delivered results are captured.",
       },
       {
-        title: "Guard against server-side request forgery",
-        body: "The guard checks the resolved IP address, not the hostname.",
-      },
-      {
         title: "Web and mobile cannot drift",
         body: "A parity check fails if files copied into the mobile app differ from the web source.",
       },
@@ -250,6 +274,32 @@ export const projects: Project[] = [
         title: "Quality gates by majority vote",
         body: "Four gates decide if an image is publishable. Each gate is a majority vote over three vision calls.",
       },
+    ],
+    security: [
+      {
+        title: "No server-side request forgery",
+        body: "Before the server fetches any outside URL, a guard resolves it and checks the IP address, not the hostname.",
+      },
+      {
+        title: "Secrets never reach the logs",
+        body: "A provider token was once logged. Now a check fails if a secret can reach a log line.",
+      },
+      {
+        title: "Webhooks are verified or distrusted",
+        body: "Stripe and Clerk signatures are verified. An unsigned provider callback is only a hint; the job status is read from the provider.",
+      },
+      {
+        title: "API access with limits",
+        body: "Developer keys are stored as argon2 hashes with limits per plan, and requests are rate-limited with Upstash Redis.",
+      },
+    ],
+    release: [
+      "Migrations are written by hand and applied by the build with prisma migrate deploy",
+      "Development runs against a local Postgres; the production database is off-limits to scripts",
+      "Checks that touch the database refuse to run unless the database is local, and clean up their own rows",
+      "Payments are tested end to end in Stripe test mode before live keys",
+      "Type check plus the check scripts listed in AGENTS.md",
+      "A frozen list of API routes the iOS app depends on, and a parity check between web and mobile code",
     ],
     openItems: [
       "Checks are plain scripts run with node:assert. There is no test framework or CI gate yet.",
@@ -345,6 +395,14 @@ export const projects: Project[] = [
         title: "Search ignores accents",
         body: "Customer search uses a generated column that folds Spanish accents.",
       },
+    ],
+    // Hidden until the /api allowlist fix ships in that repo.
+    security: [],
+    release: [
+      "8 tests with the Node test runner cover the admin allowlist and the offline quote outbox",
+      "Each change ships as its own small pull request",
+      "Leads are never lost: without the email key, they fall back to the function logs",
+      "The image migration to Vercel Blob ran with short-lived Vercel OIDC credentials, not a stored token",
     ],
     openItems: [],
   },

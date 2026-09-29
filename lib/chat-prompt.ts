@@ -1,4 +1,4 @@
-import { experience, method, profile, roleChecks, sideProjects, toolbox } from "../content/profile.ts";
+import { experience, method, profile, releaseChecks, roleChecks, security, sideProjects, toolbox } from "../content/profile.ts";
 import { projects } from "../content/projects.ts";
 
 export function buildChatPrompt() {
@@ -15,6 +15,8 @@ export function buildChatPrompt() {
         p.access ? `Access control: ${p.access.body.join(" ")}` : "",
         ...p.agents.notes.map((n) => `${n.title}: ${n.body}`),
         ...p.decisions.map((n) => `${n.title}: ${n.body}`),
+        ...p.security.map((n) => `Security, ${n.title}: ${n.body}`),
+        p.release.length ? `Before production: ${p.release.join("; ")}.` : "",
         p.openItems.length ? `Open items: ${p.openItems.join(" ")}` : "",
       ]
         .filter(Boolean)
@@ -45,6 +47,12 @@ ${roleChecks
 
 # Stack in production
 ${toolbox.map((t) => `${t.layer}: ${t.items.join(", ")} (${t.usedIn})`).join("\n")}
+
+# Security practices
+${security.map((s) => `${s.title}: ${s.body} (${s.where})`).join("\n")}
+
+# Release checks, in order
+${releaseChecks.map((r, i) => `${i + 1}. ${r.step}: ${r.body}`).join("\n")}
 
 # Method
 ${method.map((m) => `${m.step}: ${m.body}`).join("\n")}

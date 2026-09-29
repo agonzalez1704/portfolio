@@ -5,7 +5,7 @@ import { ContactForm } from "@/components/contact-form";
 import { ArrowDown, ArrowUpRight, Check } from "@/components/icons";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { experience, method, profile, roleChecks, sideProjects, toolbox } from "@/content/profile";
+import { experience, method, profile, releaseChecks, roleChecks, security, sideProjects, toolbox } from "@/content/profile";
 import { getProject } from "@/content/projects";
 
 const wrap = "mx-auto w-full max-w-[1440px] px-5 md:px-12 xl:px-24";
@@ -24,6 +24,7 @@ export default function Home() {
         <Work />
         <Method />
         <Toolbox />
+        <SecurityAndRelease />
         <Experience />
         <section className={wrap}>
           <div className="flex flex-col gap-8 rounded-3xl bg-ink p-7 text-paper md:p-12 lg:flex-row lg:items-center lg:gap-18 lg:p-18">
@@ -226,6 +227,45 @@ function Toolbox() {
             <p className="mt-auto text-[13px] leading-5 text-muted">{t.usedIn}</p>
           </div>
         ))}
+      </div>
+    </section>
+  );
+}
+
+function SecurityAndRelease() {
+  return (
+    <section className="bg-white">
+      <div className={`${wrap} grid gap-14 py-16 md:py-30 lg:grid-cols-2 lg:gap-24`}>
+        <div className="flex flex-col gap-10">
+          <h2 className={h2}>Secure by default</h2>
+          <ul className="flex flex-col divide-y divide-line">
+            {security.map((s) => (
+              <li key={s.title} className="flex flex-col gap-1.5 py-5 first:pt-0">
+                <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
+                  <h3 className="text-base leading-6 font-medium">{s.title}</h3>
+                  <span className="text-xs text-muted">{s.where}</span>
+                </div>
+                <p className="text-[15px] leading-6 text-body">{s.body}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="flex flex-col gap-10">
+          <h2 className={h2}>Before anything ships</h2>
+          <ol className="flex flex-col gap-6">
+            {releaseChecks.map((r, i) => (
+              <li key={r.step} className="grid grid-cols-[40px_minmax(0,1fr)] gap-4">
+                <span className="text-[28px] leading-8 font-light tracking-[-0.02em] text-muted tabular-nums">
+                  {i + 1}
+                </span>
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-base leading-6 font-medium">{r.step}</h3>
+                  <p className="text-[15px] leading-6 text-body">{r.body}</p>
+                </div>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
   );
