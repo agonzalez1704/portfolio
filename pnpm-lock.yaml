@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@ai-sdk/openai':
+        specifier: ^4.0.79
+        version: 4.0.79(zod@4.6.5)
       '@ai-sdk/react':
         specifier: ^4.0.122
         version: 4.0.122(react@19.2.8)(zod@4.6.5)
@@ -74,6 +77,12 @@ packages:
 
   '@ai-sdk/mcp@2.0.61':
     resolution: {integrity: sha512-X6wENye7s0ygd5/wRCRclyI5nuoiE2GRoeLgzhLAlgyAe85XOhH2uHbiWHMPJJJkBdoRItWrF7iE51moovODMg==}
+    engines: {node: '>=22'}
+    peerDependencies:
+      zod: ^3.25.76 || ^4.1.8
+
+  '@ai-sdk/openai@4.0.79':
+    resolution: {integrity: sha512-uqRlbxy04WhRuLd5dJUYFbpeKfN5Hn/d/K/fmYswbJq6RhuWdWCRoEmuLpFTpdqku9OSQGMerXMVZQi5Ou8/7Q==}
     engines: {node: '>=22'}
     peerDependencies:
       zod: ^3.25.76 || ^4.1.8
@@ -2185,6 +2194,12 @@ snapshots:
       '@ai-sdk/provider-utils': 5.0.50(zod@4.6.5)
       cross-spawn: 7.0.6
       pkce-challenge: 5.0.1
+      zod: 4.6.5
+
+  '@ai-sdk/openai@4.0.79(zod@4.6.5)':
+    dependencies:
+      '@ai-sdk/provider': 4.0.19
+      '@ai-sdk/provider-utils': 5.0.50(zod@4.6.5)
       zod: 4.6.5
 
   '@ai-sdk/provider-utils@5.0.50(zod@4.6.5)':

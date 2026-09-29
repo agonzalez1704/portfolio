@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     type: "website",
     title: `${profile.shortName}, ${profile.title}`,
     description: profile.summary,
-    images: [{ url: "/portrait.jpg", width: 1792, height: 2400, alt: profile.name }],
+    images: [{ url: "/portrait-color.jpg", width: 1792, height: 2400, alt: profile.name }],
   },
 };
 

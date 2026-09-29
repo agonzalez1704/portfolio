@@ -80,8 +80,8 @@ function Hero() {
       <div className="flex min-w-0 flex-1 items-end">
         <div className="relative h-[440px] w-full overflow-hidden rounded-t-2xl bg-well md:h-[600px] lg:h-[720px]">
           <Image
-            src="/portrait.jpg"
-            alt={`Black and white portrait of ${profile.shortName}`}
+            src="/portrait-color.jpg"
+            alt={`Portrait of ${profile.shortName}`}
             fill
             priority
             sizes="(min-width: 1024px) 560px, 100vw"
