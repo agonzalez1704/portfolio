@@ -13,7 +13,11 @@ export function buildChatPrompt() {
         ...p.features.map((f) => `${f.audience}: ${f.items.join("; ")}.`),
         ...p.techStack.map((t) => `Stack, ${t.layer}: ${t.items.join(", ")}.`),
         p.access ? `Access control: ${p.access.body.join(" ")}` : "",
-        p.ai ? `${p.ai.title}: ${p.ai.intro} ${p.ai.notes.map((n) => `${n.title}: ${n.body}`).join(" ")}` : "",
+        p.spotlight
+          ? `${p.spotlight.title}: ${p.spotlight.intro} ${p.spotlight.notes.map((n) => `${n.title}: ${n.body}`).join(" ")}`
+          : "",
+        p.pipeline ? `${p.pipeline.title}: ${p.pipeline.intro}` : "",
+        `Integrations: ${p.integrations.map((i) => `${i.name} (${i.what})`).join("; ")}`,
         ...p.agents.notes.map((n) => `${n.title}: ${n.body}`),
         ...p.decisions.map((n) => `${n.title}: ${n.body}`),
         ...p.security.map((n) => `Security, ${n.title}: ${n.body}`),

@@ -5,9 +5,9 @@ import { notFound } from "next/navigation";
 import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight } from "@/components/icons";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
-import { TechChip } from "@/components/tech-icon";
+import { TechChip, TechIcon } from "@/components/tech-icon";
 import { Sparkle } from "@phosphor-icons/react/dist/ssr";
-import { getProject, projects, type FlowNode, type Project } from "@/content/projects";
+import { getProject, projects, type FlowNode, type Note as NoteData, type Project, type Shot } from "@/content/projects";
 
 const wrap = "mx-auto w-full max-w-[1440px] px-5 md:px-12 xl:px-24";
 const h2 = "text-[32px] leading-9 tracking-[-0.03em] md:text-[40px] md:leading-11";
@@ -56,26 +56,15 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
               <dt className="text-[13px] text-muted">Live site</dt>
               <dd>
                 <a href={p.url} className="flex items-center gap-1.5 text-base leading-6 underline underline-offset-4">
-                  {p.urlLabel}
-                  <ArrowUpRight />
+                  <span className="min-w-0 break-all">{p.urlLabel}</span>
+                  <ArrowUpRight className="size-3.5 shrink-0" />
                 </a>
               </dd>
             </div>
           </dl>
         </section>
 
-        <div className={wrap}>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-well md:aspect-[2/1]">
-            <Image
-              src={p.images.hero.src}
-              alt={p.images.hero.alt}
-              fill
-              priority
-              sizes="(min-width: 1440px) 1248px, 100vw"
-              className="object-cover"
-            />
-          </div>
-        </div>
+        <Mosaic shots={p.images.sections} />
 
         <section
           className={`${wrap} grid grid-cols-2 gap-8 py-16 md:grid-cols-3 md:py-24 lg:grid-cols-[repeat(var(--n),minmax(0,1fr))]`}
@@ -114,32 +103,59 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
           </div>
         </section>
 
-        {p.ai && (
-          <section className={`${wrap} pb-16 md:pb-30`}>
+        {p.spotlight && (
+          // Integrations below bring their own top padding; only the white pipeline band needs a gap.
+          <section className={`${wrap} ${p.pipeline ? "pb-16 md:pb-30" : ""}`}>
             <div className="flex flex-col gap-10 rounded-3xl bg-ink p-7 text-paper md:gap-14 md:p-12 lg:p-18">
               <div className="flex max-w-[760px] flex-col gap-5">
                 <span className="flex items-center gap-2 text-sm text-[#bdbdbd]">
                   <Sparkle aria-hidden="true" className="size-4" />
-                  Generative AI
+                  {p.spotlight.eyebrow}
                 </span>
                 <h2 className="text-[32px] leading-9 font-light tracking-[-0.03em] text-balance md:text-[44px] md:leading-12">
-                  {p.ai.title}
+                  {p.spotlight.title}
                 </h2>
                 <p className="text-base leading-[26px] text-[#d4d4d4] text-pretty md:text-lg md:leading-[30px]">
-                  {p.ai.intro}
+                  {p.spotlight.intro}
                 </p>
               </div>
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-12">
-                {p.ai.notes.map((n) => (
+                {p.spotlight.notes.map((n) => (
                   <div key={n.title} className="flex flex-col gap-3 border-t border-[#454545] pt-6">
                     <h3 className="text-lg leading-[26px] font-medium">{n.title}</h3>
                     <p className="text-[15px] leading-[25px] text-[#bdbdbd] text-pretty">{n.body}</p>
+                    {n.tech && (
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {n.tech.map((t) => (
+                          <TechChip key={t} label={t} className="bg-[#2f2f2f] text-[#e0e0e0]" />
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
             </div>
           </section>
         )}
+
+        {p.pipeline && <Pipeline pipeline={p.pipeline} />}
+
+        <section className={`${wrap} flex flex-col gap-10 py-16 md:gap-12 md:py-30`}>
+          <h2 className={h2}>Integrations</h2>
+          <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {p.integrations.map((i) => (
+              <li key={i.name} className="flex gap-4 rounded-2xl bg-white p-5 md:p-6">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-paper">
+                  <TechIcon label={i.name} className="size-5" />
+                </span>
+                <div className="flex flex-col gap-1">
+                  <h3 className="text-base leading-6 font-medium">{i.name}</h3>
+                  <p className="text-sm leading-[22px] text-body">{i.what}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </section>
 
         <section className="bg-white">
           <div className={`${wrap} flex flex-col gap-10 py-16 md:gap-12 md:py-30`}>
@@ -160,6 +176,15 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
         </section>
 
         <Architecture p={p} />
+
+        <section className={`${wrap} flex flex-col gap-12 pb-16 md:pb-30`}>
+          <h2 className={h2}>Architecture decisions, and why</h2>
+          <div className="grid gap-10 md:grid-cols-2 md:gap-x-12">
+            {p.decisions.map((n) => (
+              <Note key={n.title} {...n} />
+            ))}
+          </div>
+        </section>
 
         {p.access && (
           <section className="bg-white">
@@ -193,16 +218,6 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
           </div>
         </section>
 
-        <Gallery p={p} />
-
-        <section className={`${wrap} flex flex-col gap-12 py-16 md:py-30`}>
-          <h2 className={h2}>Decisions worth a look</h2>
-          <div className="grid gap-10 md:grid-cols-2 md:gap-x-12">
-            {p.decisions.map((n) => (
-              <Note key={n.title} {...n} />
-            ))}
-          </div>
-        </section>
 
         <section className="bg-white">
           <div className={`${wrap} grid gap-14 py-16 md:py-30 ${p.security.length ? "lg:grid-cols-2 lg:gap-24" : ""}`}>
@@ -275,11 +290,18 @@ function Meta({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Note({ title, body }: { title: string; body: string }) {
+function Note({ title, body, tech }: NoteData) {
   return (
     <div className="flex flex-col gap-3 border-t border-rule pt-6">
       <h3 className="text-lg leading-[26px] font-medium">{title}</h3>
       <p className="text-[15px] leading-[25px] text-body text-pretty">{body}</p>
+      {tech && (
+        <div className="flex flex-wrap gap-2 pt-1">
+          {tech.map((t) => (
+            <TechChip key={t} label={t} className="bg-white" />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -334,27 +356,73 @@ function Architecture({ p }: { p: Project }) {
   );
 }
 
-function Gallery({ p }: { p: Project }) {
-  const imgs = p.images.gallery;
-  const tall = imgs.every((i) => i.height > i.width);
+// Several screens of the live product instead of one oversized hero image.
+function Mosaic({ shots }: { shots: Shot[] }) {
+  const [lead, ...rest] = shots;
   return (
-    <div className={`${wrap} grid gap-4 md:gap-6 ${imgs.length === 3 ? "grid-cols-3" : imgs.length === 2 ? "md:grid-cols-2" : ""}`}>
-      {imgs.map((img) => (
-        <div
-          key={img.src}
-          className={`relative overflow-hidden rounded-2xl bg-well ${
-            tall ? "aspect-[647/1400]" : imgs.length === 1 ? "aspect-[4/3] md:aspect-[16/7]" : "aspect-[4/3]"
-          }`}
-        >
-          <Image
-            src={img.src}
-            alt={img.alt}
-            fill
-            sizes={imgs.length > 1 ? "(min-width: 768px) 50vw, 100vw" : "100vw"}
-            className={tall ? "object-contain" : "object-cover object-top"}
-          />
-        </div>
+    <div className={`${wrap} grid gap-x-4 gap-y-6 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-6`}>
+      <Figure shot={lead} lead priority className="md:col-span-2 lg:row-span-2" />
+      {rest.map((s) => (
+        <Figure key={s.src} shot={s} />
       ))}
     </div>
+  );
+}
+
+function Figure({ shot, lead, priority, className = "" }: { shot: Shot; lead?: boolean; priority?: boolean; className?: string }) {
+  const portrait = shot.height > shot.width;
+  return (
+    <figure className={`flex flex-col gap-2.5 ${className}`}>
+      <div
+        className={`relative overflow-hidden rounded-2xl bg-well ${
+          lead ? "aspect-[16/10] lg:aspect-auto lg:min-h-[420px] lg:flex-1" : "aspect-[16/10]"
+        }`}
+      >
+        <Image
+          src={shot.src}
+          alt={shot.alt}
+          fill
+          priority={priority}
+          sizes={lead ? "(min-width: 1024px) 66vw, 100vw" : "(min-width: 1024px) 33vw, (min-width: 768px) 50vw, 100vw"}
+          className={portrait ? "object-contain py-3" : "object-cover object-top"}
+        />
+      </div>
+      <figcaption className="text-[13px] leading-5 text-muted">{shot.caption}</figcaption>
+    </figure>
+  );
+}
+
+function Pipeline({ pipeline }: { pipeline: NonNullable<Project["pipeline"]> }) {
+  return (
+    <section className="bg-white">
+      <div className={`${wrap} flex flex-col gap-12 py-16 md:gap-14 md:py-30`}>
+        <div className="flex max-w-[760px] flex-col gap-4">
+          <h2 className={h2}>{pipeline.title}</h2>
+          <p className="text-base leading-[26px] text-body text-pretty md:text-lg md:leading-[30px]">{pipeline.intro}</p>
+        </div>
+        {pipeline.examples.map((ex) => (
+          <div key={ex.material} className="flex flex-col gap-4">
+            <h3 className="text-lg leading-[26px] font-medium">{ex.material}</h3>
+            {/* Row height stays equal on desktop: each image grows by its own aspect ratio. */}
+            <ol className="grid grid-cols-2 gap-3 md:flex md:gap-4">
+              {ex.steps.map((st, i) => (
+                <li key={st.src} className="flex flex-col gap-2" style={{ flex: `${st.width / st.height} 1 0` }}>
+                  <div
+                    className="relative overflow-hidden rounded-xl bg-well"
+                    style={{ aspectRatio: `${st.width} / ${st.height}` }}
+                  >
+                    <Image src={st.src} alt={st.alt} fill sizes="(min-width: 768px) 30vw, 50vw" className="object-cover" />
+                  </div>
+                  <span className="flex items-baseline gap-2 text-[13px] leading-5">
+                    <span className="text-muted tabular-nums">{i + 1}</span>
+                    {st.caption}
+                  </span>
+                </li>
+              ))}
+            </ol>
+          </div>
+        ))}
+      </div>
+    </section>
   );
 }

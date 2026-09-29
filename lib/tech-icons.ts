@@ -40,6 +40,7 @@ import {
   siCloudflare,
   siExpo,
   siFramer,
+  siGoogle,
   siGoogleads,
   siGoogleanalytics,
   siGooglegemini,
@@ -142,6 +143,7 @@ const rules: [RegExp, Glyph][] = [
   [/QR/, QrCode],
   [/Flip-book/, BookOpen],
   [/Clerk/, siClerk],
+  [/Google sign-in/, siGoogle],
   [/PostHog/, siPosthog],
 ];
 

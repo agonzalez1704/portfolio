@@ -1,9 +1,10 @@
 // Every claim here was verified in the project's repository. Do not add numbers from memory.
 
 export type Fact = { value: string; label: string };
-export type Note = { title: string; body: string };
+export type Note = { title: string; body: string; tech?: string[] };
 export type FlowNode = { title: string; note: string; check?: boolean };
 export type Img = { src: string; alt: string; width: number; height: number };
+export type Shot = Img & { caption: string };
 
 export type Project = {
   slug: string;
@@ -12,7 +13,8 @@ export type Project = {
   tagline: string;
   // Short line for the home card.
   summary: string;
-  images: { card: Img; hero: Img; gallery: Img[] };
+  // hero = social preview; sections = the mosaic at the top of the case study.
+  images: { card: Img; hero: Img; sections: Shot[] };
   url: string;
   urlLabel: string;
   role: string;
@@ -30,8 +32,11 @@ export type Project = {
   architecture: { title: string; flow: FlowNode[]; inputs: FlowNode[] };
   // null = do not present access control for this project yet.
   access: { title: string; body: string[]; items: { name: string; note: string }[] } | null;
-  // Optional highlight for projects built around generative AI.
-  ai?: { title: string; intro: string; notes: Note[] };
+  // Dark highlight panel for the project's defining idea.
+  spotlight?: { eyebrow: string; title: string; intro: string; notes: Note[] };
+  // Before and after: raw input to finished output.
+  pipeline?: { title: string; intro: string; examples: { material: string; steps: Shot[] }[] };
+  integrations: { name: string; what: string }[];
   agents: { title: string; notes: Note[] };
   decisions: Note[];
   // Empty = do not present security for this project yet.
@@ -51,8 +56,13 @@ export const projects: Project[] = [
     images: {
       card: { src: "/projects/calzado-blade/card.jpg", alt: "Calzado Blade storefront home page", width: 1440, height: 900 },
       hero: { src: "/projects/calzado-blade/hero.jpg", alt: "Calzado Blade Thunder collection banner", width: 1800, height: 1013 },
-      gallery: [
-        { src: "/projects/calzado-blade/styles.jpg", alt: "Calzado Blade styles banner", width: 1800, height: 1012 },
+      sections: [
+        { src: "/projects/calzado-blade/hero.jpg", alt: "Calzado Blade Thunder collection banner", caption: "Home: collection banner", width: 1800, height: 1013 },
+        { src: "/projects/calzado-blade/pdp.jpg", alt: "Product page with colours, sizes and combo offer", caption: "Product page: colour, size and combo upsell", width: 1440, height: 900 },
+        { src: "/projects/calzado-blade/combo.jpg", alt: "Combo builder choosing the first pair", caption: "Combo builder: pick two pairs, tiered price", width: 1440, height: 900 },
+        { src: "/projects/calzado-blade/store.jpg", alt: "Store page with the combo banner", caption: "Store: filters and the combo entry point", width: 1440, height: 900 },
+        { src: "/projects/calzado-blade/bestsellers.jpg", alt: "Best sellers row on the home page", caption: "Home: best sellers and trust badges", width: 1440, height: 900 },
+        { src: "/projects/calzado-blade/styles.jpg", alt: "Calzado Blade styles banner", caption: "Campaign banner", width: 1800, height: 1012 },
       ],
     },
     url: "https://calzadoblade.com",
@@ -113,6 +123,20 @@ export const projects: Project[] = [
         { name: "has_permiso(...)", note: "per-permission check" },
       ],
     },
+    spotlight: {
+      eyebrow: "Build, not buy",
+      title: "Why a custom store instead of Shopify",
+      intro:
+        "The client sells in Mexico, to Mexican buyers, with rules a template does not hold. Building on Next.js and Supabase put payments, invoicing, shipping and pricing logic in code the business owns.",
+      notes: [
+        { title: "Mexican payments, natively", body: "Card with 3-D Secure, OXXO cash vouchers, SPEI transfers and Aplazo installments go through one Conekta wrapper, with the buyer-facing error shown in Spanish.", tech: ["Conekta", "Aplazo"] },
+        { title: "Invoices the SAT accepts", body: "CFDI 4.0 invoices are stamped through Facturama straight from the order and the buyer's fiscal data.", tech: ["Facturama CFDI 4.0 invoices"] },
+        { title: "Labels from the admin", body: "Staff quote carriers, print the Skydropx label and file the carta porte in one step. A cron pulls tracking status back into each order.", tech: ["Skydropx shipping labels", "Vercel Cron"] },
+        { title: "Rules that are the business", body: "Shoes are made to order, combos have pricing tiers and staff get 14 separate permissions. All of it lives in the database, not in plugin settings.", tech: ["PostgreSQL", "Row-level security"] },
+        { title: "Five brands, one codebase", body: "Each brand is a preset: name, colours, logo, warehouse and sender. Each gets its own database and deployment, so catalogs and orders never mix.", tech: ["Vercel", "Supabase"] },
+        { title: "Data it can talk to", body: "An MCP server and an admin AI chat read sales and inventory straight from Postgres. Writes wait for a person.", tech: ["MCP server", "AI SDK 7"] },
+      ],
+    },
     agents: {
       title: "Agents write, I decide",
       notes: [
@@ -131,18 +155,25 @@ export const projects: Project[] = [
       ],
     },
     decisions: [
-      {
-        title: "Webhook signatures compared in constant time",
-        body: "Payment and messaging webhooks verify an HMAC signature, and requests are rate-limited in the database.",
-      },
-      {
-        title: "Each sale counted once",
-        body: "Server-side conversion events share an event ID with the browser pixel, so the ad platform does not double count.",
-      },
-      {
-        title: "Image cost kept low",
-        body: "Images cache for 30 days and ship as AVIF and WebP to limit storage egress.",
-      },
+      { title: "SQL-native data layer, no ORM", body: "Prisma was rejected because it connects with a pooled service-role connection and would bypass row-level security. Migrations, RPCs and policies are plain SQL, so RLS stays the security backbone.", tech: ["Supabase", "Plain SQL, no ORM"] },
+      { title: "Stock math lives in the database", body: "Reserve, commit and release are RPCs that lock rows with FOR UPDATE. When the client went made-to-order, only those three primitives changed; the order code did not.", tech: ["PostgreSQL", "Security definer RPCs with row locks"] },
+      { title: "A payment webhook proves nothing", body: "The Conekta webhook needs a shared secret, then the order is fetched again from Conekta before stock is committed. Card events that fire twice are idempotent.", tech: ["Conekta"] },
+      { title: "Shipping as background work", body: "Skydropx quotes are asynchronous, so the app polls, caches the OAuth token and offers carrier pickup points. The carta porte product code comes from the brand, after one brand declared an e-bike as shoes.", tech: ["Skydropx shipping labels", "Vercel Cron"] },
+      { title: "Static pages that stay correct", body: "Catalog reads are cached with tags, and every admin write expires the exact tags it touched. Pages load from cache, and a price change shows up as soon as staff save it.", tech: ["Cache Components", "updateTag after mutations"] },
+      { title: "Sign-in that fits each user", body: "Customers sign in with Google through Supabase Auth; staff use email and password and pass an is_admin() check in the database.", tech: ["Supabase", "Google sign-in"] },
+      { title: "Each sale counted once", body: "Server-side conversion events share an event ID with the browser pixel, so ad reporting does not double count.", tech: ["Meta Conversions API"] },
+      { title: "Image cost kept low", body: "Images cache for 30 days and ship as AVIF and WebP to limit storage egress.", tech: ["AVIF and WebP images"] },
+    ],
+    integrations: [
+      { name: "Conekta", what: "Card with 3-D Secure, OXXO vouchers with barcode and expiry, SPEI transfers." },
+      { name: "Aplazo", what: "Buy now, pay later: the buyer approves installments and returns to the order." },
+      { name: "Skydropx", what: "Rate quotes, pickup points, labels, cancellations and tracking status." },
+      { name: "Facturama CFDI 4.0", what: "Tax invoices stamped from order and fiscal data." },
+      { name: "Supabase Auth with Google", what: "Customer sign-in; staff accounts gated in the database." },
+      { name: "Resend", what: "Order, payment reminder and review request emails." },
+      { name: "Meta Pixel and Conversions API", what: "Browser and server events that share one event ID." },
+      { name: "Kapso WhatsApp", what: "A sales agent that answers customers on WhatsApp." },
+      { name: "Web Push", what: "Notifies staff the moment an order is paid." },
     ],
     security: [
       {
@@ -181,10 +212,13 @@ export const projects: Project[] = [
     images: {
       card: { src: "/projects/auto-toon/card.jpg", alt: "Auto-Toon home page", width: 1440, height: 900 },
       hero: { src: "/projects/auto-toon/hero.jpg", alt: "Auto-Toon workflow canvas generating an editorial campaign", width: 1600, height: 934 },
-      gallery: [
-        { src: "/projects/auto-toon/ios-models.jpg", alt: "Auto-Toon iOS app, choosing a model", width: 647, height: 1400 },
-        { src: "/projects/auto-toon/ios-editorial.jpg", alt: "Auto-Toon iOS app, editorial result", width: 647, height: 1400 },
-        { src: "/projects/auto-toon/ios-plan.jpg", alt: "Auto-Toon iOS app, AI video plan for a product", width: 647, height: 1400 },
+      sections: [
+        { src: "/projects/auto-toon/hero.jpg", alt: "Auto-Toon workflow canvas generating an editorial campaign", caption: "Studio canvas: model, clothing, generation and multi-angle nodes", width: 1600, height: 934 },
+        { src: "/projects/auto-toon/pricing.jpg", alt: "Auto-Toon pricing page", caption: "Pay-per-use pricing", width: 1440, height: 900 },
+        { src: "/projects/auto-toon/docs.jpg", alt: "Auto-Toon API documentation", caption: "Developer API docs", width: 1440, height: 900 },
+        { src: "/projects/auto-toon/ios-models.jpg", alt: "Auto-Toon iOS app, choosing a model", caption: "iOS: pick or generate a model", width: 647, height: 1400 },
+        { src: "/projects/auto-toon/ios-editorial.jpg", alt: "Auto-Toon iOS app, editorial result", caption: "iOS: editorial result", width: 647, height: 1400 },
+        { src: "/projects/auto-toon/ios-plan.jpg", alt: "Auto-Toon iOS app, AI video plan", caption: "iOS: AI video plan", width: 647, height: 1400 },
       ],
     },
     url: "https://auto-toon.com",
@@ -242,6 +276,20 @@ export const projects: Project[] = [
         { name: "isPublic", note: "defaults to false" },
       ],
     },
+    spotlight: {
+      eyebrow: "Generative AI",
+      title: "One job queue, the right model for each job",
+      intro:
+        "Every generation is a job in Postgres. A registry decides which provider runs it: Higgsfield for product shots, personas and video; OpenAI when a person must stay the same; Gemini for edits. The app reads the product first, so prompts start from facts, not guesses.",
+      notes: [
+        { title: "Higgsfield today", body: "Marketing Studio for product key visuals, Soul 2.0 for new personas, and image-to-video with Kling 3.0 and Seedance 2.0 and 2.5.", tech: ["Higgsfield", "Kling video 3.0", "Seedance 2.0"] },
+        { title: "Same person, every photo", body: "GPT Image 2 runs through the OpenAI API directly, with the persona's references, so multi-angle shots, try-ons and campaign frames keep one face.", tech: ["gpt-image-2"] },
+        { title: "Edits with Nano Banana Pro", body: "Nano Banana Pro is not in Higgsfield's public API, so upscale, relight, background and retouch go to Gemini 3 Pro Image directly.", tech: ["Gemini 3 Pro Image"] },
+        { title: "Reads the image before it writes", body: "A vision model returns a structured brief of the upload: product family, materials, brand colours as hex, the logo, and any label text transcribed word for word. Prompts keep labels legible and colours on brand.", tech: ["GPT-4o mini vision"] },
+        { title: "Suggests the next shot", body: "After each image the app offers the next step in the order a real shoot runs: scene, model, light, 4K, motion. A model only writes the idea, and steps already done are not offered.", tech: ["GPT-5 mini and nano"] },
+        { title: "Video from a brief", body: "A small model writes the cut list for a video against a strict schema. The video models then run as jobs in the same queue as the images.", tech: ["Seedance 2.0", "Kling video 3.0"] },
+      ],
+    },
     agents: {
       title: "Rules the agents must follow",
       notes: [
@@ -260,22 +308,25 @@ export const projects: Project[] = [
       ],
     },
     decisions: [
-      {
-        title: "No generation inside a request",
-        body: "Serverless functions share no memory, so the database row is the only lock. There is a concurrency limit per account.",
-      },
-      {
-        title: "Charge only for what arrived",
-        body: "The card is authorized when a job is requested. Only delivered results are captured.",
-      },
-      {
-        title: "Web and mobile cannot drift",
-        body: "A parity check fails if files copied into the mobile app differ from the web source.",
-      },
-      {
-        title: "Quality gates by majority vote",
-        body: "Four gates decide if an image is publishable. Each gate is a majority vote over three vision calls.",
-      },
+      { title: "No generation inside a request", body: "Serverless functions share no memory, so a Postgres row is the only lock. Jobs are claimed by status and a cron dispatches, settles and recovers them every minute.", tech: ["Job queue on Postgres rows", "Cron every minute for jobs"] },
+      { title: "Respect the provider's limits", body: "Higgsfield allows four concurrent requests per account and rejects the fifth. The queue hands out four slots and retries when one frees up.", tech: ["Higgsfield"] },
+      { title: "Unsigned webhooks are only a hint", body: "Each job's callback URL carries its own token, and the real status is read from the provider. The work runs after the reply, because copying a video out takes longer than the 10 seconds the provider waits.", tech: ["Higgsfield", "Route handlers for the API"] },
+      { title: "Keep what was paid for", body: "Provider files expire, so finished images and videos are copied to Cloudflare R2 before the job closes.", tech: ["Cloudflare R2 and Supabase Storage"] },
+      { title: "Charge only for what arrived", body: "The card is authorized when a job is requested and only delivered results are captured. Jobs the provider fails or blocks are not charged.", tech: ["Stripe authorize and capture"] },
+      { title: "Web and mobile cannot drift", body: "The iOS app depends on a frozen list of API routes, and a parity check fails if shared code differs between web and mobile.", tech: ["Expo 55", "Next.js 16"] },
+      { title: "Quality gates by majority vote", body: "Four gates decide if an image is publishable. Each gate is a majority vote over three vision calls.", tech: ["GPT-4o mini vision"] },
+    ],
+    integrations: [
+      { name: "Higgsfield", what: "Product key visuals, personas, and image-to-video with Kling and Seedance." },
+      { name: "OpenAI", what: "GPT Image 2 for consistent people; vision and small models for briefs." },
+      { name: "Google Gemini", what: "Nano Banana Pro for upscale, relight and retouch." },
+      { name: "Stripe", what: "Authorize first, capture only what was delivered, monthly spend cap." },
+      { name: "Apple App Store", what: "In-app purchases on iOS." },
+      { name: "Clerk", what: "One sign-in for web and mobile." },
+      { name: "Cloudflare R2", what: "Permanent copies of every finished file." },
+      { name: "Upstash Redis", what: "Rate limits." },
+      { name: "Resend", what: "Lifecycle emails with React Email." },
+      { name: "PostHog", what: "Product analytics." },
     ],
     security: [
       {
@@ -317,9 +368,13 @@ export const projects: Project[] = [
     images: {
       card: { src: "/projects/grupo-barro-y-cantera/card.jpg", alt: "Grupo Barro y Cantera home page", width: 1440, height: 900 },
       hero: { src: "/projects/grupo-barro-y-cantera/hero.jpg", alt: "Stone wall clad in Galarza stone from the catalog", width: 1800, height: 1800 },
-      gallery: [
-        { src: "/projects/grupo-barro-y-cantera/catalog.jpg", alt: "Grupo Barro y Cantera catalog page", width: 1440, height: 900 },
-        { src: "/projects/grupo-barro-y-cantera/porfido.jpg", alt: "Porfido stone applied in a room", width: 1800, height: 1800 },
+      sections: [
+        { src: "/projects/grupo-barro-y-cantera/floors.jpg", alt: "Floors catalog with generated room scenes", caption: "Floors: every tile shown installed", width: 1440, height: 900 },
+        { src: "/projects/grupo-barro-y-cantera/catalogs.jpg", alt: "Catalog covers with flip book and PDF", caption: "Catalogs: flip book and PDF per family", width: 1440, height: 900 },
+        { src: "/projects/grupo-barro-y-cantera/materials.jpg", alt: "Stone materials grid with application scenes", caption: "Stone: material cards lead with the scene", width: 1440, height: 900 },
+        { src: "/projects/grupo-barro-y-cantera/collections.jpg", alt: "Home page collections", caption: "Home: collections", width: 1440, height: 900 },
+        { src: "/projects/grupo-barro-y-cantera/hero.jpg", alt: "Stone wall clad in Galarza stone", caption: "Material scene", width: 1800, height: 1800 },
+        { src: "/projects/grupo-barro-y-cantera/porfido.jpg", alt: "Porfido stone applied in a room", caption: "Material scene", width: 1800, height: 1800 },
       ],
     },
     url: "https://www.grupobarroycantera.com.mx",
@@ -366,7 +421,33 @@ export const projects: Project[] = [
     },
     // Hidden until the /api allowlist fix ships in that repo.
     access: null,
-    ai: {
+    pipeline: {
+      title: "From a phone photo to a catalog page",
+      intro:
+        "The yard's products were photographed with a phone, right at the yard. Each photo becomes a clean swatch, and the swatch becomes the reference for a phone scene and a desktop scene.",
+      examples: [
+        {
+          material: "Grano de mármol rosa",
+          steps: [
+            { src: "/projects/grupo-barro-y-cantera/pipeline/rosa-raw.jpg", alt: "Phone photo of a pile of pink marble gravel", caption: "Phone photo", width: 1200, height: 900 },
+            { src: "/projects/grupo-barro-y-cantera/pipeline/rosa-material.jpg", alt: "Clean square swatch of the gravel", caption: "Clean swatch", width: 1200, height: 1200 },
+            { src: "/projects/grupo-barro-y-cantera/pipeline/rosa-aplicacion.jpg", alt: "Generated garden path with the gravel, portrait", caption: "Phone scene, 3:4", width: 896, height: 1200 },
+            { src: "/projects/grupo-barro-y-cantera/pipeline/rosa-panoramica.jpg", alt: "Generated garden with the gravel, wide", caption: "Desktop scene, 16:9", width: 1400, height: 781 },
+          ],
+        },
+        {
+          material: "Cantera Rosa Bader",
+          steps: [
+            { src: "/projects/grupo-barro-y-cantera/pipeline/bader-raw.jpg", alt: "Phone photo of a pink cantera slab with the photographer's shadow", caption: "Phone photo", width: 1200, height: 900 },
+            { src: "/projects/grupo-barro-y-cantera/pipeline/bader-material.jpg", alt: "Clean square swatch of the cantera", caption: "Clean swatch", width: 1400, height: 1400 },
+            { src: "/projects/grupo-barro-y-cantera/pipeline/bader-aplicacion.jpg", alt: "Generated garden walkway paved with the cantera, with the swatch inset", caption: "Phone scene, 3:4", width: 1045, height: 1400 },
+            { src: "/projects/grupo-barro-y-cantera/pipeline/bader-panoramica.jpg", alt: "Generated patio paved with the cantera, wide", caption: "Desktop scene, 16:9", width: 1400, height: 788 },
+          ],
+        },
+      ],
+    },
+    spotlight: {
+      eyebrow: "Generative AI",
       title: "Generative AI for every page of the catalog",
       intro:
         "Materials across the catalog, the flip books and the PDFs are shown in scenes generated with Gemini 3 Pro Image through the Auto-Toon image pipeline. The real product stays the reference, so the stone keeps its true colour and texture.",
@@ -415,24 +496,24 @@ export const projects: Project[] = [
       ],
     },
     decisions: [
-      {
-        title: "Quote numbers without races",
-        body: "The folio comes from a generated column in the database, not from a counter in the app.",
-      },
-      {
-        title: "Images moved after a quota incident",
-        body: "Storage egress used up the backend quota and paused the project. Images moved to Vercel Blob with content-hashed URLs.",
-      },
-      {
-        title: "Spec data is never inferred",
-        body: "Spec columns stay empty unless the manufacturer publishes the value.",
-      },
-      {
-        title: "Search ignores accents",
-        body: "Customer search uses a generated column that folds Spanish accents.",
-      },
+      { title: "Quote numbers without races", body: "The folio comes from a generated column on a sequence, not from a counter in the app, so two salespeople can never get the same number.", tech: ["Generated columns for folios and search"] },
+      { title: "Quotes that survive the backend", body: "Folios are reserved ahead of time, saves go to an outbox with an idempotent client ID, and drafts stay on the device.", tech: ["Offline outbox with idempotent saves"] },
+      { title: "Images moved after a quota incident", body: "Storage egress used up the backend quota and paused the project. Images moved to Vercel Blob with content-hashed URLs cached for a year.", tech: ["Vercel Blob with content-hashed URLs"] },
+      { title: "Scenes stored per screen", body: "Each material keeps a 3:4 scene for phones and a 16:9 scene for desktop, so no screen shows a crop of the other.", tech: ["Gemini 3 Pro Image"] },
+      { title: "Spec data is never inferred", body: "Spec columns stay empty unless the manufacturer publishes the value.", tech: ["InsForge Postgres"] },
+      { title: "Search ignores accents", body: "Customer search uses a generated column that folds Spanish accents.", tech: ["Generated columns for folios and search"] },
     ],
     // Hidden until the /api allowlist fix ships in that repo.
+    integrations: [
+      { name: "Gemini 3 Pro Image", what: "Application scenes generated from real swatches." },
+      { name: "InsForge Postgres", what: "Products, quotes, customers and analytics events." },
+      { name: "Clerk", what: "Sign-in for the internal tools." },
+      { name: "Vercel Blob", what: "Product images with content-hashed URLs." },
+      { name: "Resend", what: "Lead emails from the contact form." },
+      { name: "Google Analytics and Google Ads", what: "Traffic and lead conversions." },
+      { name: "Meta Pixel and Conversions API", what: "Lead events deduplicated across browser and server." },
+      { name: "WhatsApp", what: "Quotes and contact in one tap." },
+    ],
     security: [],
     release: [
       "8 tests with the Node test runner cover the admin allowlist and the offline quote outbox",

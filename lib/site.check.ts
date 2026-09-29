@@ -11,7 +11,8 @@ for (const p of projects) {
   assert.ok(prompt.includes(p.name), `prompt is missing ${p.name}`);
   assert.ok(p.techStack.length && p.features.length === 2, `${p.slug} needs stack and two feature groups`);
   assert.ok(p.release.length, `${p.slug} needs release checks`);
-  if (p.ai) assert.ok(prompt.includes(p.ai.title), `prompt is missing ${p.slug} AI section`);
+  if (p.spotlight) assert.ok(prompt.includes(p.spotlight.title), `prompt is missing ${p.slug} spotlight`);
+  assert.ok(p.images.sections.length >= 4, `${p.slug} needs section shots for the mosaic`);
   for (const n of p.security) assert.ok(prompt.includes(n.title), `prompt is missing ${p.slug} security`);
   for (const t of p.techStack) assert.ok(prompt.includes(t.items[0]), `prompt is missing ${p.slug} ${t.layer}`);
 }
@@ -53,7 +54,12 @@ for (const p of projects) {
 }
 
 // Every stack chip must resolve to a real icon, not the fallback.
-const chips = [...projects.flatMap((p) => p.techStack.flatMap((t) => t.items)), ...toolbox.flatMap((t) => t.items)];
+const chips = [
+  ...projects.flatMap((p) => p.techStack.flatMap((t) => t.items)),
+  ...projects.flatMap((p) => [...p.decisions, ...(p.spotlight?.notes ?? [])].flatMap((n) => n.tech ?? [])),
+  ...projects.flatMap((p) => p.integrations.map((i) => i.name)),
+  ...toolbox.flatMap((t) => t.items),
+];
 const unmapped = chips.filter((c) => iconFor(c) === fallbackIcon);
 assert.deepEqual(unmapped, [], `stack items without an icon: ${unmapped.join(", ")}`);
 
