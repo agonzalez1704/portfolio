@@ -6,6 +6,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight } from "@/compo
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { TechChip } from "@/components/tech-icon";
+import { Sparkle } from "@phosphor-icons/react/dist/ssr";
 import { getProject, projects, type FlowNode, type Project } from "@/content/projects";
 
 const wrap = "mx-auto w-full max-w-[1440px] px-5 md:px-12 xl:px-24";
@@ -112,6 +113,33 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
             ))}
           </div>
         </section>
+
+        {p.ai && (
+          <section className={`${wrap} pb-16 md:pb-30`}>
+            <div className="flex flex-col gap-10 rounded-3xl bg-ink p-7 text-paper md:gap-14 md:p-12 lg:p-18">
+              <div className="flex max-w-[760px] flex-col gap-5">
+                <span className="flex items-center gap-2 text-sm text-[#bdbdbd]">
+                  <Sparkle aria-hidden="true" className="size-4" />
+                  Generative AI
+                </span>
+                <h2 className="text-[32px] leading-9 font-light tracking-[-0.03em] text-balance md:text-[44px] md:leading-12">
+                  {p.ai.title}
+                </h2>
+                <p className="text-base leading-[26px] text-[#d4d4d4] text-pretty md:text-lg md:leading-[30px]">
+                  {p.ai.intro}
+                </p>
+              </div>
+              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-12">
+                {p.ai.notes.map((n) => (
+                  <div key={n.title} className="flex flex-col gap-3 border-t border-[#454545] pt-6">
+                    <h3 className="text-lg leading-[26px] font-medium">{n.title}</h3>
+                    <p className="text-[15px] leading-[25px] text-[#bdbdbd] text-pretty">{n.body}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="bg-white">
           <div className={`${wrap} flex flex-col gap-10 py-16 md:gap-12 md:py-30`}>

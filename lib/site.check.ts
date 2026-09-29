@@ -11,6 +11,7 @@ for (const p of projects) {
   assert.ok(prompt.includes(p.name), `prompt is missing ${p.name}`);
   assert.ok(p.techStack.length && p.features.length === 2, `${p.slug} needs stack and two feature groups`);
   assert.ok(p.release.length, `${p.slug} needs release checks`);
+  if (p.ai) assert.ok(prompt.includes(p.ai.title), `prompt is missing ${p.slug} AI section`);
   for (const n of p.security) assert.ok(prompt.includes(n.title), `prompt is missing ${p.slug} security`);
   for (const t of p.techStack) assert.ok(prompt.includes(t.items[0]), `prompt is missing ${p.slug} ${t.layer}`);
 }

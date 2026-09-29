@@ -69,7 +69,7 @@ export const toolbox = [
   {
     layer: "AI",
     items: ["AI SDK 7", "Vercel AI Gateway", "MCP servers", "OpenAI", "Gemini", "Kling and Seedance"],
-    usedIn: "Admin chat and MCP on Calzado Blade, image and video pipeline on Auto-Toon",
+    usedIn: "Admin chat and MCP on Calzado Blade, image and video pipeline on Auto-Toon, catalog scenes on Barro y Cantera",
   },
   {
     layer: "Payments",

@@ -30,6 +30,8 @@ export type Project = {
   architecture: { title: string; flow: FlowNode[]; inputs: FlowNode[] };
   // null = do not present access control for this project yet.
   access: { title: string; body: string[]; items: { name: string; note: string }[] } | null;
+  // Optional highlight for projects built around generative AI.
+  ai?: { title: string; intro: string; notes: Note[] };
   agents: { title: string; notes: Note[] };
   decisions: Note[];
   // Empty = do not present security for this project yet.
@@ -310,8 +312,8 @@ export const projects: Project[] = [
     name: "Grupo Barro y Cantera",
     kind: "Catalog and quoting",
     tagline:
-      "Catalog and quote builder for a stone and clay supplier. Quotes keep working offline.",
-    summary: "Catalog and quotes that keep working offline.",
+      "Catalog and quote builder for a stone and clay supplier. Every material is shown in an AI-generated setting, and quotes keep working offline.",
+    summary: "Stone catalog with AI-generated scenes, and quotes that work offline.",
     images: {
       card: { src: "/projects/grupo-barro-y-cantera/card.jpg", alt: "Grupo Barro y Cantera home page", width: 1440, height: 900 },
       hero: { src: "/projects/grupo-barro-y-cantera/hero.jpg", alt: "Stone wall clad in Galarza stone from the catalog", width: 1800, height: 1800 },
@@ -325,27 +327,30 @@ export const projects: Project[] = [
     role: "Sole engineer, directing agents",
     timeline: "November 2025 to August 2026",
     stackSummary: "Next.js 16, InsForge, Clerk, Vercel Blob",
-    stack: ["Next.js 16", "InsForge", "Clerk", "Vercel Blob"],
+    stack: ["Next.js 16", "Gemini 3 Pro Image", "InsForge", "Vercel Blob"],
     techStack: [
       { layer: "Frontend", items: ["Next.js 16", "React 19.2", "React Compiler", "TypeScript 5.9", "Tailwind CSS 4.1", "shadcn and Radix", "Motion", "React Hook Form with Zod"] },
       { layer: "Rendering", items: ["App Router", "Catalog regenerated every 60 seconds", "revalidatePath after admin writes", "Route handlers for the API"] },
       { layer: "Data", items: ["InsForge Postgres", "SDK queries, no ORM", "9 migrations", "Generated columns for folios and search", "Offline outbox with idempotent saves"] },
       { layer: "Auth and storage", items: ["Clerk", "Fail-closed admin email allowlist", "Vercel Blob with content-hashed URLs", "Migration run with Vercel OIDC"] },
+      { layer: "Generative AI", items: ["Gemini 3 Pro Image", "gpt-image-2", "Auto-Toon image pipeline", "Swatches cropped from real photos", "Watermark and text removal", "Perspective correction", "Per-size renders"] },
       { layer: "Documents", items: ["jsPDF quotes and catalogs", "QR codes per product", "HEIC to JPEG conversion", "Flip-book catalogs"] },
       { layer: "Marketing", items: ["GA4", "Google Ads", "Meta Pixel and Conversions API", "Resend lead emails", "Vercel Analytics", "Google Maps"] },
     ],
     features: [
-      { audience: "For customers", items: ["Catalogs by family, as a flip book", "PDF download per family", "Prices per size and spec sheets", "Shareable link to a single material", "Contact form and WhatsApp quotes"] },
+      { audience: "For customers", items: ["Materials shown in generated rooms, floors, pools, gardens and façades", "Renders per size, next to each price", "Catalogs by family, as a flip book", "PDF download per family", "Prices per size and spec sheets", "Shareable link to a single material", "Contact form and WhatsApp quotes"] },
       { audience: "For the sales team", items: ["Quote builder with folio, tax and deposit", "Quotes that keep working offline", "Customer search that ignores accents", "Catalog editor with photo uploads", "QR downloads and categories", "Metrics dashboard"] },
     ],
     facts: [
+      { value: "2", label: "AI scenes per material: 3:4 for phones, 16:9 for desktop" },
+      { value: "20", label: "garden scenes generated for Granos de Mármol alone" },
       { value: "95", label: "commits, shipped as small pull requests" },
       { value: "8", label: "tests on offline quotes and admin access" },
       { value: "9", label: "database migrations" },
     ],
     clientStory: null,
     scope:
-      "The public site is a catalog with flip-book views, PDF export per family, prices per size and spec sheets. Staff build quotes as PDFs with folio, tax and deposit, manage the catalog with photo uploads, and read a metrics dashboard.",
+      "A stone yard sells by look and texture, but supplier photos are close-ups. Generative AI turns each material into the finished space: a floor, a wall, a pool deck or a garden. The public site is a catalog with flip-book views, PDF export per family, prices per size and spec sheets. Staff build quotes as PDFs with folio, tax and deposit, manage the catalog with photo uploads, and read a metrics dashboard.",
     architecture: {
       title: "Quotes that survive an outage",
       flow: [
@@ -361,6 +366,37 @@ export const projects: Project[] = [
     },
     // Hidden until the /api allowlist fix ships in that repo.
     access: null,
+    ai: {
+      title: "Generative AI for every page of the catalog",
+      intro:
+        "Materials across the catalog, the flip books and the PDFs are shown in scenes generated with Gemini 3 Pro Image through the Auto-Toon image pipeline. The real product stays the reference, so the stone keeps its true colour and texture.",
+      notes: [
+        {
+          title: "Real swatch in, generated scene out",
+          body: "Swatches are cropped from real product photos. The model gets that swatch as its reference and builds the room, floor, pool or garden around it.",
+        },
+        {
+          title: "Two formats per material",
+          body: "A 3:4 scene for phones and a 16:9 scene for desktop, stored separately so each screen gets a composed image, not a crop.",
+        },
+        {
+          title: "Clean inputs",
+          body: "Supplier images arrive with watermarks, text and skewed angles. Those are removed and straightened before a scene is generated.",
+        },
+        {
+          title: "Output is checked",
+          body: "The batch script confirms each image came from Gemini 3 Pro and not a fallback model before it is kept.",
+        },
+        {
+          title: "No scene, no listing",
+          body: "A product stays hidden until its generated scene exists. When an admin save once wiped the scenes, the form stopped sending those fields.",
+        },
+        {
+          title: "Renders per size",
+          body: "Materials like Pórfido Rojo carry a render for each size, shown next to that size's price.",
+        },
+      ],
+    },
     agents: {
       title: "Small changes, explained",
       notes: [
