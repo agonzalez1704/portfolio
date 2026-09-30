@@ -1,5 +1,11 @@
 @import "tailwindcss";
 
+/* Inline: the font variables live on the proposal page's wrapper, not on :root. */
+@theme inline {
+  --font-bodoni: var(--font-bodoni-moda), Didot, "Bodoni 72", serif;
+  --font-hanken: var(--font-hanken-grotesk), "Helvetica Neue", Arial, sans-serif;
+}
+
 @theme {
   --color-paper: #f8f8f8;
   --color-ink: #222222;
@@ -14,6 +20,13 @@
   --color-accent-tint: #e4ddff;
   --font-sans: var(--font-geist), "Helvetica Neue", Arial, sans-serif;
   --font-mono: var(--font-geist-mono), Menlo, monospace;
+  /* Client proposals (/propuesta): editorial paper and ink. */
+  --color-crema: #f2ede4;
+  --color-crema-honda: #e9e2d6;
+  --color-espresso: #1c1916;
+  --color-cafe: #3a342e;
+  --color-taupe: #675f56;
+  --color-filo: #cfc6b8;
   --animate-spin-slow: spin-slow 24s linear infinite;
 
   @keyframes spin-slow {

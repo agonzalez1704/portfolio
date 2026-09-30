@@ -84,6 +84,8 @@ assert.equal(new Set(propuestas.map((p) => p.id)).size, propuestas.length, "dupl
 for (const p of propuestas) {
   assert.match(p.id, /-[0-9a-f]{10}$/, `${p.id} needs a random suffix (openssl rand -hex 5)`);
   assert.ok(1.05 / (luminance(p.color) + 0.05) >= 4.5, `${p.id}: white text on ${p.color} is below 4.5:1`);
+  // The accent is also text on the cream paper (#f2ede4).
+  assert.ok((luminance("#f2ede4") + 0.05) / (luminance(p.color) + 0.05) >= 4.5, `${p.id}: ${p.color} on cream is below 4.5:1`);
   assert.ok(p.piezas.length && p.paquetes.length, `${p.id} needs pieces and packages`);
   assert.ok(p.fecha <= p.vigencia, `${p.id}: vigencia is before fecha`);
 }
