@@ -12,7 +12,7 @@ export const profile = {
   location: "León, Guanajuato, MX",
   headline: "I direct AI coding agents. I own what ships.",
   summary:
-    "Full-stack for 12+ years. I write the spec, set the checks, review every change and design the data layer. Three products live in production.",
+    "Full-stack for 12+ years. I write the spec, set the checks, review every change and design the data layer. Four products live in production.",
   contact: {
     email: "agonzalez.nrn02@gmail.com",
     linkedin: "https://www.linkedin.com/in/juan-antonio-gonzalez-torres",
@@ -54,32 +54,32 @@ export const roleChecks: RoleCheck[] = [
   { requirement: "Talks to the client", evidence: null },
 ];
 
-// What runs in production today, and where. Only tools verified in the three repos.
+// What runs in production today, and where. Only tools verified in the product repos.
 export const toolbox = [
   {
     layer: "Frontend",
     items: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS 4", "shadcn and Radix", "Expo and React Native"],
-    usedIn: "All three products",
+    usedIn: "All four products",
   },
   {
     layer: "Data",
     items: ["PostgreSQL", "Supabase", "Prisma 7", "InsForge", "Row-level security", "SQL-native RPCs"],
-    usedIn: "Supabase on Calzado Blade, Prisma on Auto-Toon, InsForge on Barro y Cantera",
+    usedIn: "Supabase on Calzado Blade, Prisma on Auto-Toon, InsForge on Barro y Cantera and Fiable",
   },
   {
     layer: "AI",
     items: ["AI SDK 7", "Vercel AI Gateway", "MCP servers", "OpenAI", "Gemini", "Kling and Seedance"],
-    usedIn: "Admin chat and MCP on Calzado Blade, image and video pipeline on Auto-Toon, catalog scenes on Barro y Cantera",
+    usedIn: "Admin chat and MCP on Calzado Blade, image and video on Auto-Toon, catalog scenes on Barro y Cantera, a WhatsApp sales agent on Fiable",
   },
   {
     layer: "Payments",
     items: ["Stripe", "Conekta", "MercadoPago", "Aplazo", "Apple in-app purchases", "CFDI invoicing"],
-    usedIn: "Checkout on Calzado Blade, pay per use on Auto-Toon",
+    usedIn: "Checkout on Calzado Blade and Fiable, pay per use on Auto-Toon",
   },
   {
     layer: "Platform",
     items: ["Vercel", "Vercel Cron", "Vercel Blob", "Clerk", "Resend", "Upstash Redis"],
-    usedIn: "All three products deploy on Vercel",
+    usedIn: "All four products deploy on Vercel",
   },
 ];
 

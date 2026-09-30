@@ -23,6 +23,7 @@ import {
   Perspective,
   QrCode,
   Queue,
+  Printer,
   Receipt,
   Rows,
   ShieldCheck,
@@ -34,6 +35,7 @@ import {
   VideoCamera,
 } from "@phosphor-icons/react/dist/ssr";
 import {
+  siAliexpress,
   siAnthropic,
   siAppstore,
   siClerk,
@@ -52,6 +54,7 @@ import {
   siNextdotjs,
   siOpenrouter,
   siPostgresql,
+  siPwa,
   siPosthog,
   siPrisma,
   siRadixui,
@@ -78,6 +81,16 @@ export type Glyph = SimpleIcon | PhosphorIcon;
 // Brands use Simple Icons; ideas without a logo (migrations, cron, locks) use Phosphor.
 const rules: [RegExp, Glyph][] = [
   [/push/i, Bell],
+  [/Whisper/, OpenAiLogo],
+  [/PWA/, siPwa],
+  [/FIFO/, Stack],
+  [/ledger/, Rows],
+  [/ESC\/POS|tickets/, Printer],
+  [/PDF/, FilePdf],
+  [/Excel/, Table],
+  [/deploys/, Stack],
+  [/AliExpress/, siAliexpress],
+  [/Base UI/, Cube],
   [/WhatsApp/, siWhatsapp],
   [/per brand/, Stack],
   [/Job queue|outbox/, Queue],

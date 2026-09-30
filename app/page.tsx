@@ -12,8 +12,9 @@ import { getProject } from "@/content/projects";
 const wrap = "mx-auto w-full max-w-[1440px] px-5 md:px-12 xl:px-24";
 const h2 = "text-[32px] leading-9 tracking-[-0.03em] md:text-[40px] md:leading-11";
 
-// Card order on the page: the strongest case in the wide middle column.
-const work = ["auto-toon", "calzado-blade", "grupo-barro-y-cantera"].map((s) => getProject(s)!);
+// Two rows, wide and narrow alternating, so no row repeats the same rhythm.
+const work = ["calzado-blade", "auto-toon", "fiable", "grupo-barro-y-cantera"].map((s) => getProject(s)!);
+const span = ["lg:col-span-7", "lg:col-span-5", "lg:col-span-5", "lg:col-span-7"];
 
 export default function Home() {
   return (
@@ -59,7 +60,7 @@ function Hero() {
       <div className="flex flex-col gap-8 pt-6 lg:w-[640px] lg:shrink-0 lg:pt-16 lg:pb-22">
         <div className="flex gap-10 md:gap-14">
           <Stat value="12" label="Years shipping software" />
-          <Stat value="1,200" label="Commits on three live products" />
+          <Stat value="1,500" label="Commits on four live products" />
         </div>
         <div className="flex flex-col gap-6 lg:mt-auto lg:gap-7">
           <h1 className="-ml-1 text-[84px] leading-[84px] font-light tracking-[-0.055em] md:text-[128px] md:leading-[120px] lg:-ml-2 lg:text-[160px] lg:leading-[150px]">
@@ -116,7 +117,7 @@ function About() {
           <h2 className={h2}>About me</h2>
           <p className="text-base leading-[27px] text-body text-pretty">
             Twelve years building SaaS, e-commerce and AI products for teams in the US and Mexico. Today I write the
-            spec, set the checks and review what the agents write. Three of those products run in production.
+            spec, set the checks and review what the agents write. Four of those products run in production.
           </p>
         </div>
         <div className="flex flex-col gap-5 rounded-2xl bg-paper p-7">
@@ -156,15 +157,15 @@ function Work() {
   return (
     <section id="work" className={`${wrap} flex flex-col gap-10 py-16 md:gap-12 md:py-30`}>
       <h2 className={h2}>Selected work</h2>
-      <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-[5fr_7fr_5fr] lg:gap-6">
-        {work.map((p) => (
-          <Link key={p.slug} href={`/work/${p.slug}`} prefetch={true} className="group flex flex-col gap-4">
+      <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-14">
+        {work.map((p, i) => (
+          <Link key={p.slug} href={`/work/${p.slug}`} prefetch={true} className={`group flex flex-col gap-4 ${span[i]}`}>
             <div className="relative h-[240px] overflow-hidden rounded-2xl bg-well md:h-[340px] lg:h-[420px]">
               <Image
                 src={p.images.card.src}
                 alt={p.images.card.alt}
                 fill
-                sizes="(min-width: 1024px) 40vw, (min-width: 768px) 50vw, 100vw"
+                sizes="(min-width: 1024px) 60vw, (min-width: 768px) 50vw, 100vw"
                 className="object-cover object-left-top transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.02] motion-reduce:transition-none"
               />
               <span className="absolute top-1/2 left-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-ink text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
