@@ -35,3 +35,9 @@ export const chatSchema = z.object({
       "Message too long.",
     ),
 });
+
+export const vistaSchema = z.object({
+  id: z.string().max(80),
+  evento: z.enum(["abrio", "acepto"]),
+  paquete: z.string().max(40).optional(),
+});

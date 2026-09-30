@@ -2,8 +2,9 @@
 import assert from "node:assert/strict";
 import { roleChecks, toolbox } from "../content/profile.ts";
 import { projects } from "../content/projects.ts";
+import { propuestas } from "../content/propuestas/index.ts";
 import { buildChatPrompt } from "./chat-prompt.ts";
-import { chatSchema, contactSchema } from "./schemas.ts";
+import { chatSchema, contactSchema, vistaSchema } from "./schemas.ts";
 import { fallbackIcon, iconFor } from "./tech-icons.ts";
 
 const prompt = buildChatPrompt();
@@ -70,3 +71,21 @@ const unmapped = chips.filter((c) => iconFor(c) === fallbackIcon);
 assert.deepEqual(unmapped, [], `stack items without an icon: ${unmapped.join(", ")}`);
 
 console.log("site checks passed");
+
+// Proposals: the id is the secret link, and white text sits on the brand colour.
+const luminance = (hex: string) => {
+  const [r, g, b] = [1, 3, 5].map((i) => {
+    const c = parseInt(hex.slice(i, i + 2), 16) / 255;
+    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
+  });
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+assert.equal(new Set(propuestas.map((p) => p.id)).size, propuestas.length, "duplicate proposal id");
+for (const p of propuestas) {
+  assert.match(p.id, /-[0-9a-f]{10}$/, `${p.id} needs a random suffix (openssl rand -hex 5)`);
+  assert.ok(1.05 / (luminance(p.color) + 0.05) >= 4.5, `${p.id}: white text on ${p.color} is below 4.5:1`);
+  assert.ok(p.piezas.length && p.paquetes.length, `${p.id} needs pieces and packages`);
+  assert.ok(p.fecha <= p.vigencia, `${p.id}: vigencia is before fecha`);
+}
+assert.ok(vistaSchema.safeParse({ id: "x", evento: "abrio" }).success);
+assert.ok(!vistaSchema.safeParse({ id: "x", evento: "borrar" }).success);
