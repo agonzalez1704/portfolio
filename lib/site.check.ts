@@ -17,6 +17,12 @@ for (const p of projects) {
   for (const t of p.techStack) assert.ok(prompt.includes(t.items[0]), `prompt is missing ${p.slug} ${t.layer}`);
 }
 assert.ok(!prompt.includes("null"), "prompt leaks a null placeholder");
+// Unreleased work must never read as production in the chat.
+for (const p of projects) {
+  for (const n of [...(p.spotlight?.notes ?? []), ...p.decisions, ...p.security, ...p.agents.notes].filter((n) => n.next)) {
+    assert.ok(prompt.includes(`${n.title} (in an unreleased rewrite`), `${p.slug}: "${n.title}" is not marked as unreleased`);
+  }
+}
 assert.ok(!/\[[A-Z ]+:/.test(prompt), "prompt leaks a bracket placeholder");
 assert.equal(new Set(projects.map((p) => p.slug)).size, projects.length, "duplicate slug");
 assert.ok(roleChecks.some((c) => c.evidence), "no role evidence");

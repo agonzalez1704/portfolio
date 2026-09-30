@@ -41,7 +41,7 @@ export const roleChecks: RoleCheck[] = [
   },
   {
     requirement: "Writes the tests",
-    evidence: "23 active check scripts on Auto-Toon, written after real incidents",
+    evidence: "23 check scripts in the Auto-Toon rewrite, each written after a real incident",
   },
   {
     requirement: "Reviews every change",
@@ -63,7 +63,7 @@ export const toolbox = [
   },
   {
     layer: "Data",
-    items: ["PostgreSQL", "Supabase", "Prisma 7", "InsForge", "Row-level security", "Postgres job queues"],
+    items: ["PostgreSQL", "Supabase", "Prisma 7", "InsForge", "Row-level security", "SQL-native RPCs"],
     usedIn: "Supabase on Calzado Blade, Prisma on Auto-Toon, InsForge on Barro y Cantera",
   },
   {
@@ -87,15 +87,15 @@ export const toolbox = [
 export const security = [
   { title: "Access checked twice", body: "Server guards check the role, then row-level security checks every row.", where: "Calzado Blade" },
   { title: "Signed webhooks", body: "HMAC signatures compared in constant time; Stripe and Clerk signatures verified.", where: "Calzado Blade, Auto-Toon" },
-  { title: "SSRF guard", body: "Outside URLs are resolved and the IP is checked before the server fetches them.", where: "Auto-Toon" },
-  { title: "Secrets stay secret", body: "Server-only modules, hashed API keys, and a check that fails if a secret can reach the logs.", where: "Auto-Toon, Calzado Blade" },
+  { title: "SSRF guard", body: "Outside URLs are resolved and the IP is checked before the server fetches them.", where: "Auto-Toon rewrite" },
+  { title: "Secrets stay secret", body: "Server-only modules, hashed API keys, and a check that fails if a secret can reach the logs.", where: "Calzado Blade, Auto-Toon and its rewrite" },
   { title: "Abuse limits", body: "Rate limits in Postgres and Upstash, a cap on pending orders, and bot checks on public forms.", where: "Calzado Blade, Auto-Toon, this site" },
   { title: "AI with a person in the loop", body: "AI tools read; writes wait for a human. This site's chat answers only from reviewed content.", where: "Calzado Blade, this site" },
 ];
 
 export const releaseChecks = [
   { step: "Type check", body: "tsc on every project before a change ships." },
-  { step: "Executable checks", body: "Checks next to the logic they guard: 23 on Auto-Toon, 8 tests on Barro y Cantera." },
+  { step: "Executable checks", body: "Checks next to the logic they guard: 8 tests on Barro y Cantera, 23 in the Auto-Toon rewrite." },
   { step: "Local data only", body: "Database checks refuse to run against production and clean up after themselves." },
   { step: "Test-mode payments", body: "Stripe test mode end to end before live keys." },
   { step: "Migrations by hand", body: "Written and reviewed, then applied by the build or a per-brand runbook." },

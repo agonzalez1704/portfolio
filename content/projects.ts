@@ -1,7 +1,8 @@
 // Every claim here was verified in the project's repository. Do not add numbers from memory.
 
 export type Fact = { value: string; label: string };
-export type Note = { title: string; body: string; tech?: string[] };
+// next = only in an unreleased branch; the UI marks it "In the rewrite".
+export type Note = { title: string; body: string; tech?: string[]; next?: boolean };
 export type FlowNode = { title: string; note: string; check?: boolean };
 export type Img = { src: string; alt: string; width: number; height: number };
 export type Shot = Img & { caption: string };
@@ -36,13 +37,15 @@ export type Project = {
   spotlight?: { eyebrow: string; title: string; intro: string; notes: Note[] };
   // Before and after: raw input to finished output.
   pipeline?: { title: string; intro: string; examples: { material: string; steps: Shot[] }[] };
-  integrations: { name: string; what: string }[];
+  integrations: { name: string; what: string; next?: boolean }[];
+  // Set when part of the story lives in a branch that is not deployed yet.
+  rewrite?: { branch: string; ahead: number; note: string };
   agents: { title: string; notes: Note[] };
   decisions: Note[];
   // Empty = do not present security for this project yet.
   security: Note[];
   // What happens before a change reaches production.
-  release: string[];
+  release: { text: string; next?: boolean }[];
   openItems: string[];
 };
 
@@ -194,10 +197,10 @@ export const projects: Project[] = [
       },
     ],
     release: [
-      "A written runbook per brand: new Supabase project, migrations pushed with supabase db push, cron jobs confirmed in SQL",
-      "Demo seed data is skipped on real launches; the client loads real products through the admin",
-      "Production build before every deploy",
-      "Smoke checks with curl against the live domain after deploy",
+      { text: "A written runbook per brand: new Supabase project, migrations pushed with supabase db push, cron jobs confirmed in SQL" },
+      { text: "Demo seed data is skipped on real launches; the client loads real products through the admin" },
+      { text: "Production build before every deploy" },
+      { text: "Smoke checks with curl against the live domain after deploy" },
     ],
     openItems: [
       "This repository has no automated tests yet. Correctness rests on database constraints, row locks and review.",
@@ -226,136 +229,122 @@ export const projects: Project[] = [
     role: "Founder and engineer, directing agents",
     timeline: "November 2025 to present",
     stackSummary: "Next.js 16, Expo, Prisma, Clerk, Stripe",
-    stack: ["Next.js 16", "Expo", "Prisma", "Stripe", "gpt-image-2", "Gemini"],
+    stack: ["Next.js 16", "Expo", "Prisma", "Stripe", "gpt-image-2", "Kling video 3.0"],
     techStack: [
-      { layer: "Web", items: ["Next.js 16", "React 19.2", "TypeScript 5.9", "Tailwind CSS 4.2", "HeroUI 3", "Radix and shadcn", "React Flow", "Zustand 5", "Zod 4"] },
+      { layer: "Web", items: ["Next.js 16", "React 19.2", "TypeScript 5.9", "Tailwind CSS 4", "HeroUI 3", "Radix and shadcn", "React Flow", "Zustand 5", "Zod 4"] },
       { layer: "Mobile", items: ["Expo 55", "React Native 0.83", "Expo Router", "TanStack Query", "Reanimated 4", "In-app purchases", "EAS builds"] },
-      { layer: "Data", items: ["PostgreSQL", "Prisma 7 with the pg adapter", "14 migrations", "Job queue on Postgres rows", "Upstash Redis rate limits", "Cloudflare R2 and Supabase Storage"] },
-      { layer: "AI models", items: ["gpt-image-2", "Gemini 3 Pro Image", "Kling video 3.0", "Seedance 2.0", "Flux 2 Pro", "Ideogram 3", "GPT-5 mini and nano"] },
-      { layer: "AI providers", items: ["OpenAI", "Google GenAI", "Higgsfield", "Fal", "Replicate"] },
-      { layer: "Auth and billing", items: ["Clerk on web and mobile", "Stripe authorize and capture", "Apple App Store purchases", "API keys hashed with argon2"] },
-      { layer: "Platform", items: ["Vercel", "Cron every minute for jobs", "Resend with React Email", "PostHog", "Expo push notifications", "MCP server with 6 tools"] },
+      { layer: "Data", items: ["PostgreSQL", "Prisma 7 with the pg adapter", "Upstash Redis rate limits", "Cloudflare R2 and Supabase Storage"] },
+      { layer: "AI models", items: ["gpt-image-2", "Gemini 3 Pro Image", "Kling video 3.0", "Seedance 2 Pro", "Seedream 4.5", "Ideogram 3", "GPT-4o mini vision"] },
+      { layer: "AI providers", items: ["OpenAI", "Google GenAI", "Kling API", "Replicate", "Fal"] },
+      { layer: "Auth and billing", items: ["Clerk on web and mobile", "Stripe pay-per-use billing", "Apple App Store purchases", "API keys hashed with argon2"] },
+      { layer: "Platform", items: ["Vercel", "Vercel Cron for emails and cleanup", "Resend with React Email", "PostHog", "Expo push notifications", "MCP server"] },
+      { layer: "In the rewrite, not deployed yet", items: ["Higgsfield", "Job queue on Postgres rows", "Stripe authorize and capture", "SSRF guard", "Secret-leak check", "23 check scripts"] },
     ],
     features: [
-      { audience: "For brands", items: ["Product photography from one phone photo", "Relight, restore and upscale", "Multi-angle product sets", "Fitting room and fashion editorials", "AI models and UGC characters", "Video ads with Kling and Seedance", "Storyboards and campaigns", "Library and public gallery"] },
-      { audience: "For developers and billing", items: ["Public API with per-plan limits", "CLI and MCP server", "Pay per use with a monthly spend cap", "Card authorized first, only delivered work captured", "iOS app with in-app purchases", "Background generation that resumes on reopen"] },
+      { audience: "For brands", items: ["Product photography from one phone photo", "Relight, restore and upscale", "Multi-angle product sets", "Wardrobe and fashion editorials", "AI model factory and UGC characters", "Video ads with Kling and Seedance", "Storyboards", "Asset library"] },
+      { audience: "For developers and billing", items: ["Public API with per-plan limits", "CLI and MCP server", "Pay-per-use billing", "iOS app with in-app purchases", "Background generation that resumes on reopen"] },
     ],
     facts: [
-      { value: "711", label: "commits on the web app" },
-      { value: "130", label: "API routes behind one job queue" },
-      { value: "23", label: "active check scripts" },
-      { value: "14", label: "recorded decisions in the rewrite plan" },
+      { value: "615", label: "commits on the live web app" },
+      { value: "109", label: "API routes in production" },
+      { value: "108", label: "commits in a rewrite, not deployed yet" },
       { value: "2", label: "clients on one API: web and iOS" },
     ],
+    rewrite: {
+      branch: "feat/rewrite-espina",
+      ahead: 108,
+      note: "auto-toon.com runs the main branch. A rewrite that moves every generation onto one job queue with Higgsfield is 108 commits ahead and not deployed yet. Items marked In the rewrite come from that branch.",
+    },
     clientStory: null,
     scope:
       "Users produce ad campaigns from a product photo: product photography, relight, multi-angle, upscale, fitting room, fashion editorial, AI personas, UGC characters, video and storyboards. Billing is pay per use. Developers reach the same features through an API, a CLI and an MCP server.",
     architecture: {
-      title: "Every generation is a job",
+      title: "How a generation runs today",
       flow: [
         { title: "Web and iOS apps", note: "Next.js and Expo" },
-        { title: "API routes", note: "Clerk session or API key" },
-        { title: "Job queue", note: "rows in Postgres, claimed by status", check: true },
-        { title: "AI providers", note: "image and video models" },
+        { title: "API routes", note: "Clerk session or API key", check: true },
+        { title: "AI providers", note: "OpenAI, Gemini, Kling, Replicate" },
+        { title: "Storage", note: "Cloudflare R2 and Supabase", check: true },
       ],
       inputs: [
-        { title: "Cron, every minute", note: "dispatch, settle and recover jobs" },
-        { title: "Payments", note: "authorize first, capture what arrived" },
+        { title: "Stripe", note: "pay-per-use, metered usage" },
+        { title: "Gemini fallback", note: "retries, circuit breaker, Replicate" },
       ],
     },
     access: {
       title: "Access enforced in application code",
       body: [
         "This product does not use row-level security. Sign-in middleware guards every route that is not on a public list. Admin routes check an allowlist of user IDs and return 403 otherwise.",
-        "API keys are stored as argon2 hashes with limits per plan. Publishing to the public gallery is opt-in.",
+        "Developer API keys are stored as argon2 hashes, with limits per plan.",
       ],
       items: [
         { name: "middleware.ts", note: "public-route allowlist" },
         { name: "ADMIN_USER_IDS", note: "admin routes, 403 otherwise" },
         { name: "lib/api-key.ts", note: "argon2 hashes, plan limits" },
-        { name: "isPublic", note: "defaults to false" },
       ],
     },
     spotlight: {
       eyebrow: "Generative AI",
-      title: "One job queue, the right model for each job",
+      title: "The right model for each job",
       intro:
-        "Every generation is a job in Postgres. A registry decides which provider runs it: Higgsfield for product shots, personas and video; OpenAI when a person must stay the same; Gemini for edits. The app reads the product first, so prompts start from facts, not guesses.",
+        "In production, each feature calls the model that fits it and reads the product before writing a prompt. A rewrite, not deployed yet, moves every generation onto one job queue with Higgsfield.",
       notes: [
-        { title: "Higgsfield today", body: "Marketing Studio for product key visuals, Soul 2.0 for new personas, and image-to-video with Kling 3.0 and Seedance 2.0 and 2.5.", tech: ["Higgsfield", "Kling video 3.0", "Seedance 2.0"] },
-        { title: "Same person, every photo", body: "GPT Image 2 runs through the OpenAI API directly, with the persona's references, so multi-angle shots, try-ons and campaign frames keep one face.", tech: ["gpt-image-2"] },
-        { title: "Edits with Nano Banana Pro", body: "Nano Banana Pro is not in Higgsfield's public API, so upscale, relight, background and retouch go to Gemini 3 Pro Image directly.", tech: ["Gemini 3 Pro Image"] },
         { title: "Reads the image before it writes", body: "A vision model returns a structured brief of the upload: product family, materials, brand colours as hex, the logo, and any label text transcribed word for word. Prompts keep labels legible and colours on brand.", tech: ["GPT-4o mini vision"] },
-        { title: "Suggests the next shot", body: "After each image the app offers the next step in the order a real shoot runs: scene, model, light, 4K, motion. A model only writes the idea, and steps already done are not offered.", tech: ["GPT-5 mini and nano"] },
-        { title: "Video from a brief", body: "A small model writes the cut list for a video against a strict schema. The video models then run as jobs in the same queue as the images.", tech: ["Seedance 2.0", "Kling video 3.0"] },
+        { title: "Same person, every photo", body: "GPT Image 2 runs through the OpenAI API with the model's references, so character sheets, try-ons and campaign frames keep one face.", tech: ["gpt-image-2"] },
+        { title: "Edits that survive outages", body: "Upscale, relight and retouch call Gemini 3 Pro Image with retries and a circuit breaker, and fall back to Nano Banana Pro on Replicate when Google is at capacity.", tech: ["Gemini 3 Pro Image", "Replicate"] },
+        { title: "Video from a brief", body: "A small model writes the cut list for a video against a strict schema. The clips render with Kling 3.0 through the Kling API or with Seedance 2 Pro.", tech: ["GPT-5 mini and nano", "Kling video 3.0", "Seedance 2 Pro"] },
+        { title: "Higgsfield for shots and video", body: "The rewrite sends product key visuals to Marketing Studio, new personas to Soul 2.0, and image-to-video to Kling 3.0 and Seedance 2.0 and 2.5 through Higgsfield's API.", tech: ["Higgsfield"], next: true },
+        { title: "Suggests the next shot", body: "After each image, the rewrite offers the next step in the order a real shoot runs: scene, model, light, 4K, motion. A model only writes the idea; steps already done are not offered.", tech: ["GPT-5 mini and nano"], next: true },
       ],
     },
     agents: {
       title: "Rules the agents must follow",
       notes: [
-        {
-          title: "A written plan with decisions",
-          body: "The rewrite plan records decisions D1 to D14 and the phases. It freezes the list of API routes the mobile app depends on.",
-        },
-        {
-          title: "AGENTS.md as the contract",
-          body: "It covers generated UI, pricing, the job-queue rule, error codes and a warning that the local environment points to production.",
-        },
-        {
-          title: "Checks written after incidents",
-          body: "A secret-leak check exists because a provider token was once logged. An aspect-ratio check exists because the same 422 error shipped twice.",
-        },
+        { title: "A written plan with decisions", body: "The rewrite plan records decisions D1 to D14 and the phases, and freezes the list of API routes the mobile app depends on.", next: true },
+        { title: "AGENTS.md as the contract", body: "It covers generated UI, pricing, the job-queue rule, error codes and a warning that the local environment points to production.", next: true },
+        { title: "Checks written after incidents", body: "A secret-leak check exists because a provider token was once logged. An aspect-ratio check exists because the same 422 error shipped twice.", next: true },
       ],
     },
     decisions: [
-      { title: "No generation inside a request", body: "Serverless functions share no memory, so a Postgres row is the only lock. Jobs are claimed by status and a cron dispatches, settles and recovers them every minute.", tech: ["Job queue on Postgres rows", "Cron every minute for jobs"] },
-      { title: "Respect the provider's limits", body: "Higgsfield allows four concurrent requests per account and rejects the fifth. The queue hands out four slots and retries when one frees up.", tech: ["Higgsfield"] },
-      { title: "Unsigned webhooks are only a hint", body: "Each job's callback URL carries its own token, and the real status is read from the provider. The work runs after the reply, because copying a video out takes longer than the 10 seconds the provider waits.", tech: ["Higgsfield", "Route handlers for the API"] },
-      { title: "Keep what was paid for", body: "Provider files expire, so finished images and videos are copied to Cloudflare R2 before the job closes.", tech: ["Cloudflare R2 and Supabase Storage"] },
-      { title: "Charge only for what arrived", body: "The card is authorized when a job is requested and only delivered results are captured. Jobs the provider fails or blocks are not charged.", tech: ["Stripe authorize and capture"] },
-      { title: "Web and mobile cannot drift", body: "The iOS app depends on a frozen list of API routes, and a parity check fails if shared code differs between web and mobile.", tech: ["Expo 55", "Next.js 16"] },
-      { title: "Quality gates by majority vote", body: "Four gates decide if an image is publishable. Each gate is a majority vote over three vision calls.", tech: ["GPT-4o mini vision"] },
+      { title: "A fallback for every image edit", body: "Gemini capacity errors are common, so edits retry, trip a circuit breaker when Google is saturated, and continue on Nano Banana Pro through Replicate.", tech: ["Gemini 3 Pro Image", "Replicate"] },
+      { title: "Pay per use, metered", body: "Usage is reported to a metered Stripe price instead of selling credit packs, so a brand pays for what it generates.", tech: ["Stripe pay-per-use billing"] },
+      { title: "No generation inside a request", body: "Serverless functions share no memory, so a Postgres row is the only lock. Jobs are claimed by status and a cron dispatches, settles and recovers them every minute.", tech: ["Job queue on Postgres rows"], next: true },
+      { title: "Respect the provider's limits", body: "Higgsfield allows four concurrent requests per account and rejects the fifth. The queue hands out four slots and retries when one frees up.", tech: ["Higgsfield"], next: true },
+      { title: "Unsigned webhooks are only a hint", body: "Each job's callback URL carries its own token, and the real status is read from the provider. The work runs after the reply, because copying a video out takes longer than the 10 seconds the provider waits.", tech: ["Higgsfield"], next: true },
+      { title: "Charge only for what arrived", body: "The card is authorized when a job is requested and only delivered results are captured. Jobs the provider fails or blocks are not charged.", tech: ["Stripe authorize and capture"], next: true },
+      { title: "Web and mobile cannot drift", body: "The iOS app depends on a frozen list of API routes, and a parity check fails if shared code differs between web and mobile.", tech: ["Expo 55", "Next.js 16"], next: true },
+      { title: "Quality gates by majority vote", body: "Four gates decide if an image is publishable. Each gate is a majority vote over three vision calls.", tech: ["GPT-4o mini vision"], next: true },
     ],
     integrations: [
-      { name: "Higgsfield", what: "Product key visuals, personas, and image-to-video with Kling and Seedance." },
       { name: "OpenAI", what: "GPT Image 2 for consistent people; vision and small models for briefs." },
       { name: "Google Gemini", what: "Nano Banana Pro for upscale, relight and retouch." },
-      { name: "Stripe", what: "Authorize first, capture only what was delivered, monthly spend cap." },
+      { name: "Kling API", what: "Kling 3.0 image-to-video." },
+      { name: "Replicate", what: "Fallback for Gemini edits, plus Seedream and Qwen image models." },
+      { name: "Stripe", what: "Pay-per-use billing with metered usage." },
       { name: "Apple App Store", what: "In-app purchases on iOS." },
       { name: "Clerk", what: "One sign-in for web and mobile." },
-      { name: "Cloudflare R2", what: "Permanent copies of every finished file." },
+      { name: "Cloudflare R2", what: "Storage for generated files." },
       { name: "Upstash Redis", what: "Rate limits." },
       { name: "Resend", what: "Lifecycle emails with React Email." },
       { name: "PostHog", what: "Product analytics." },
+      { name: "Higgsfield", what: "Product shots, personas, and image-to-video through one API.", next: true },
     ],
     security: [
-      {
-        title: "No server-side request forgery",
-        body: "Before the server fetches any outside URL, a guard resolves it and checks the IP address, not the hostname.",
-      },
-      {
-        title: "Secrets never reach the logs",
-        body: "A provider token was once logged. Now a check fails if a secret can reach a log line.",
-      },
-      {
-        title: "Webhooks are verified or distrusted",
-        body: "Stripe and Clerk signatures are verified. An unsigned provider callback is only a hint; the job status is read from the provider.",
-      },
-      {
-        title: "API access with limits",
-        body: "Developer keys are stored as argon2 hashes with limits per plan, and requests are rate-limited with Upstash Redis.",
-      },
+      { title: "Webhooks are verified", body: "Stripe and Clerk webhook signatures are checked before any event is acted on." },
+      { title: "API access with limits", body: "Developer keys are stored as argon2 hashes with limits per plan, and requests are rate-limited with Upstash Redis." },
+      { title: "No server-side request forgery", body: "Before the server fetches any outside URL, a guard resolves it and checks the IP address, not the hostname.", next: true },
+      { title: "Secrets never reach the logs", body: "A provider token was once logged. Now a check fails if a secret can reach a log line.", next: true },
     ],
     release: [
-      "Migrations are written by hand and applied by the build with prisma migrate deploy",
-      "Development runs against a local Postgres; the production database is off-limits to scripts",
-      "Checks that touch the database refuse to run unless the database is local, and clean up their own rows",
-      "Payments are tested end to end in Stripe test mode before live keys",
-      "Type check plus the check scripts listed in AGENTS.md",
-      "A frozen list of API routes the iOS app depends on, and a parity check between web and mobile code",
+      { text: "Migrations are applied by the build with prisma migrate deploy" },
+      { text: "Development runs against a local Postgres; the production database is off-limits to scripts", next: true },
+      { text: "Checks that touch the database refuse to run unless the database is local, and clean up their own rows", next: true },
+      { text: "Payments are tested end to end in Stripe test mode before live keys", next: true },
+      { text: "Type check plus the check scripts listed in AGENTS.md", next: true },
+      { text: "A frozen list of API routes the iOS app depends on, and a parity check between web and mobile code", next: true },
     ],
     openItems: [
-      "Checks are plain scripts run with node:assert. There is no test framework or CI gate yet.",
+      "Production has no automated checks yet. The 23 check scripts, the job queue and the Higgsfield integration live in the rewrite branch, which is not deployed.",
     ],
   },
   {
@@ -516,10 +505,10 @@ export const projects: Project[] = [
     ],
     security: [],
     release: [
-      "8 tests with the Node test runner cover the admin allowlist and the offline quote outbox",
-      "Each change ships as its own small pull request",
-      "Leads are never lost: without the email key, they fall back to the function logs",
-      "The image migration to Vercel Blob ran with short-lived Vercel OIDC credentials, not a stored token",
+      { text: "8 tests with the Node test runner cover the admin allowlist and the offline quote outbox" },
+      { text: "Each change ships as its own small pull request" },
+      { text: "Leads are never lost: without the email key, they fall back to the function logs" },
+      { text: "The image migration to Vercel Blob ran with short-lived Vercel OIDC credentials, not a stored token" },
     ],
     openItems: [],
   },

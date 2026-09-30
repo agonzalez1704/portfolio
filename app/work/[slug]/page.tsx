@@ -6,7 +6,7 @@ import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, ArrowUpRight } from "@/compo
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { TechChip, TechIcon } from "@/components/tech-icon";
-import { Sparkle } from "@phosphor-icons/react/dist/ssr";
+import { GitBranch, Sparkle } from "@phosphor-icons/react/dist/ssr";
 import { getProject, projects, type FlowNode, type Note as NoteData, type Project, type Shot } from "@/content/projects";
 
 const wrap = "mx-auto w-full max-w-[1440px] px-5 md:px-12 xl:px-24";
@@ -62,6 +62,14 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
               </dd>
             </div>
           </dl>
+          {p.rewrite && (
+            <p className="flex max-w-[860px] gap-3 rounded-2xl bg-white p-5 text-[15px] leading-6 text-body">
+              <GitBranch aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-ink" />
+              <span>
+                {p.rewrite.note} <span className="font-mono text-[13px] text-ink">{p.rewrite.branch}</span>
+              </span>
+            </p>
+          )}
         </section>
 
         <Mosaic shots={p.images.sections} />
@@ -122,6 +130,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
               <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3 lg:gap-x-12">
                 {p.spotlight.notes.map((n) => (
                   <div key={n.title} className="flex flex-col gap-3 border-t border-[#454545] pt-6">
+                    {n.next && <RewriteBadge dark />}
                     <h3 className="text-lg leading-[26px] font-medium">{n.title}</h3>
                     <p className="text-[15px] leading-[25px] text-[#bdbdbd] text-pretty">{n.body}</p>
                     {n.tech && (
@@ -149,6 +158,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
                   <TechIcon label={i.name} className="size-5" />
                 </span>
                 <div className="flex flex-col gap-1">
+                  {i.next && <RewriteBadge />}
                   <h3 className="text-base leading-6 font-medium">{i.name}</h3>
                   <p className="text-sm leading-[22px] text-body">{i.what}</p>
                 </div>
@@ -235,11 +245,14 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
               <h2 className={h2}>Before it reaches production</h2>
               <ol className={`grid gap-6 ${p.security.length ? "" : "md:grid-cols-2 md:gap-x-12"}`}>
                 {p.release.map((r, i) => (
-                  <li key={r} className="grid grid-cols-[40px_minmax(0,1fr)] gap-4">
+                  <li key={r.text} className="grid grid-cols-[40px_minmax(0,1fr)] gap-4">
                     <span className="text-[28px] leading-8 font-light tracking-[-0.02em] text-muted tabular-nums">
                       {i + 1}
                     </span>
-                    <p className="pt-1 text-[15px] leading-6 text-body text-pretty">{r}</p>
+                    <div className="flex flex-col items-start gap-2 pt-1">
+                      {r.next && <RewriteBadge />}
+                      <p className="text-[15px] leading-6 text-body text-pretty">{r.text}</p>
+                    </div>
                   </li>
                 ))}
               </ol>
@@ -290,9 +303,23 @@ function Meta({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Note({ title, body, tech }: NoteData) {
+function RewriteBadge({ dark }: { dark?: boolean }) {
+  return (
+    <span
+      className={`inline-flex items-center gap-1.5 self-start rounded-full border px-2.5 py-0.5 text-xs leading-5 ${
+        dark ? "border-[#5a5a5a] text-[#d4d4d4]" : "border-rule text-body"
+      }`}
+    >
+      <GitBranch aria-hidden="true" className="size-3.5" />
+      In the rewrite, not deployed yet
+    </span>
+  );
+}
+
+function Note({ title, body, tech, next }: NoteData) {
   return (
     <div className="flex flex-col gap-3 border-t border-rule pt-6">
+      {next && <RewriteBadge />}
       <h3 className="text-lg leading-[26px] font-medium">{title}</h3>
       <p className="text-[15px] leading-[25px] text-body text-pretty">{body}</p>
       {tech && (
