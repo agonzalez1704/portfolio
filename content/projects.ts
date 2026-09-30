@@ -508,7 +508,7 @@ export const projects: Project[] = [
       { layer: "Frontend", items: ["Next.js 16", "React 19.2", "React Compiler", "TypeScript 5.9", "Tailwind CSS 4.1", "shadcn and Radix", "Motion", "React Hook Form with Zod"] },
       { layer: "Rendering", items: ["App Router", "Catalog regenerated every 60 seconds", "revalidatePath after admin writes", "Route handlers for the API"] },
       { layer: "Data", items: ["InsForge Postgres", "SDK queries, no ORM", "9 migrations", "Generated columns for folios and search", "Offline outbox with idempotent saves"] },
-      { layer: "Auth and storage", items: ["Clerk", "Fail-closed admin email allowlist", "Vercel Blob with content-hashed URLs", "Migration run with Vercel OIDC"] },
+      { layer: "Auth and storage", items: ["Clerk", "Vercel Blob with content-hashed URLs", "Migration run with Vercel OIDC"] },
       { layer: "Generative AI", items: ["Gemini 3 Pro Image", "gpt-image-2", "Auto-Toon image pipeline", "Swatches cropped from real photos", "Watermark and text removal", "Perspective correction", "Per-size renders"] },
       { layer: "Documents", items: ["jsPDF quotes and catalogs", "QR codes per product", "HEIC to JPEG conversion", "Flip-book catalogs"] },
       { layer: "Marketing", items: ["GA4", "Google Ads", "Meta Pixel and Conversions API", "Resend lead emails", "Vercel Analytics", "Google Maps"] },
