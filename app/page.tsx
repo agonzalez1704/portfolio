@@ -2,7 +2,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { AskBanner, AskLink } from "@/components/chat";
 import { ContactForm } from "@/components/contact-form";
-import { ArrowDown, ArrowUpRight, Check } from "@/components/icons";
+import { ArrowUpRight, Check } from "@/components/icons";
+import { CashRegister, MagicWand, Mountains, Sneaker } from "@phosphor-icons/react/dist/ssr";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { TechChip } from "@/components/tech-icon";
@@ -22,6 +23,7 @@ export default function Home() {
       <SiteHeader />
       <main>
         <Hero />
+        <LiveProducts />
         <About />
         <Work />
         <Method />
@@ -29,12 +31,12 @@ export default function Home() {
         <SecurityAndRelease />
         <Experience />
         <section className={wrap}>
-          <div className="flex flex-col gap-8 rounded-3xl bg-ink p-7 text-paper md:p-12 lg:flex-row lg:items-center lg:gap-18 lg:p-18">
-            <div className="flex flex-col gap-4 lg:w-[520px] lg:shrink-0 lg:gap-5">
+          <div className="flex flex-col gap-8 rounded-3xl bg-gradient-to-br from-accent-strong to-accent p-7 text-white md:p-12 lg:p-18 xl:flex-row xl:items-center xl:gap-18">
+            <div className="flex flex-col gap-4 lg:gap-5 xl:w-[480px] xl:shrink-0">
               <h2 className="text-[30px] leading-[34px] font-light tracking-[-0.03em] md:text-[44px] md:leading-12">
                 Ask my AI about my work
               </h2>
-              <p className="text-[15px] leading-6 text-[#bdbdbd] md:text-base md:leading-[26px]">
+              <p className="text-[15px] leading-6 text-white/85 md:text-base md:leading-[26px]">
                 It answers from my CV and project notes, and says so when it does not know.
               </p>
             </div>
@@ -69,12 +71,16 @@ function Hero() {
           <p className="max-w-[460px] text-lg leading-7 text-[#444] text-pretty md:text-xl md:leading-[30px]">
             {profile.title}. I direct AI coding agents, and I own what they ship.
           </p>
-          <div className="flex flex-wrap gap-x-8 text-sm font-medium">
-            <a href={profile.cvPath} download className="flex h-11 items-center gap-1.5 underline underline-offset-4">
-              Download CV
-              <ArrowDown />
+          <div className="flex flex-wrap items-center gap-x-8 gap-y-3 text-sm font-medium">
+            <a href="#contact" className="group flex items-center gap-1.5">
+              <span className="flex h-12 items-center rounded-full bg-accent px-6 text-[15px] text-white transition-colors group-hover:bg-accent-strong">
+                Get in touch
+              </span>
+              <span className="flex size-12 items-center justify-center rounded-full bg-accent-tint text-accent-strong transition-transform group-hover:rotate-45 motion-reduce:transition-none">
+                <ArrowUpRight className="size-4" />
+              </span>
             </a>
-            <AskLink className="flex h-11 cursor-pointer items-center gap-1.5 text-muted hover:text-ink">
+            <AskLink className="flex h-11 cursor-pointer items-center gap-1.5 text-muted hover:text-accent">
               Ask my AI about me
             </AskLink>
           </div>
@@ -90,7 +96,64 @@ function Hero() {
             sizes="(min-width: 1024px) 560px, 100vw"
             className="object-cover object-[center_20%]"
           />
+          <RoleBadge />
         </div>
+      </div>
+    </section>
+  );
+}
+
+// Slow-turning seal over the portrait; static when the visitor prefers less motion.
+function RoleBadge() {
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute top-5 left-5 flex size-28 items-center justify-center rounded-full bg-white/90 shadow-[0_8px_24px_rgb(34_34_34/0.12)] md:top-6 md:left-6 md:size-32"
+    >
+      <svg viewBox="0 0 120 120" className="absolute inset-0 animate-spin-slow motion-reduce:animate-none">
+        <defs>
+          <path id="role-badge" d="M60,60 m-44,0 a44,44 0 1,1 88,0 a44,44 0 1,1 -88,0" />
+        </defs>
+        <text className="fill-ink text-[10px] font-medium tracking-[0.18em] uppercase">
+          <textPath href="#role-badge" textLength="272">
+            Principal engineer · AI agents ·
+          </textPath>
+        </text>
+      </svg>
+      <span className="flex size-10 items-center justify-center rounded-full bg-accent text-xs font-semibold text-white">AG</span>
+    </div>
+  );
+}
+
+// The four live products, right under the hero, each linking to its case study.
+const live = [
+  { slug: "calzado-blade", name: "Calzado Blade", Icon: Sneaker },
+  { slug: "auto-toon", name: "Auto-Toon", Icon: MagicWand },
+  { slug: "fiable", name: "Fiable", Icon: CashRegister },
+  { slug: "grupo-barro-y-cantera", name: "Barro y Cantera", Icon: Mountains },
+];
+
+function LiveProducts() {
+  return (
+    <section aria-label="Products in production" className="border-y border-line bg-white">
+      <div className={`${wrap} flex flex-col gap-5 py-7 lg:flex-row lg:items-center lg:justify-between`}>
+        <p className="text-sm text-muted">
+          <span className="font-medium text-ink">Four products</span> running in production today
+        </p>
+        <ul className="grid grid-cols-2 gap-x-8 gap-y-3 sm:flex sm:flex-wrap sm:gap-x-12">
+          {live.map(({ slug, name, Icon }) => (
+            <li key={slug}>
+              <Link
+                href={`/work/${slug}`}
+                prefetch={true}
+                className="flex h-11 items-center gap-2.5 text-[15px] font-medium text-[#8a8a8a] transition-colors hover:text-accent"
+              >
+                <Icon aria-hidden="true" className="size-5" />
+                {name}
+              </Link>
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );
@@ -120,8 +183,8 @@ function About() {
             spec, set the checks and review what the agents write. Four of those products run in production.
           </p>
         </div>
-        <div className="flex flex-col gap-5 rounded-2xl bg-paper p-7">
-          <div className="text-[56px] leading-14 font-light tracking-[-0.05em] md:text-7xl md:leading-18">87%</div>
+        <div className="flex flex-col gap-5 rounded-2xl bg-accent-soft p-7">
+          <div className="text-[56px] leading-14 font-light tracking-[-0.05em] text-accent md:text-7xl md:leading-18">87%</div>
           <p className="text-sm leading-[22px] text-body">
             of Calzado Blade commits were co-authored with an AI agent. I reviewed every one.
           </p>
@@ -138,7 +201,7 @@ function About() {
         <ul className="flex flex-col gap-7">
           {checks.map((c) => (
             <li key={c.requirement} className="flex gap-4">
-              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-ink text-white">
+              <span className="flex size-7 shrink-0 items-center justify-center rounded-full bg-accent text-white">
                 <Check />
               </span>
               <div className="flex flex-col gap-1">
@@ -155,36 +218,39 @@ function About() {
 
 function Work() {
   return (
-    <section id="work" className={`${wrap} flex flex-col gap-10 py-16 md:gap-12 md:py-30`}>
-      <h2 className={h2}>Selected work</h2>
-      <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-14">
-        {work.map((p, i) => (
-          <Link key={p.slug} href={`/work/${p.slug}`} prefetch={true} className={`group flex flex-col gap-4 ${span[i]}`}>
-            <div className="relative h-[240px] overflow-hidden rounded-2xl bg-well md:h-[340px] lg:h-[420px]">
-              <Image
-                src={p.images.card.src}
-                alt={p.images.card.alt}
-                fill
-                sizes="(min-width: 1024px) 60vw, (min-width: 768px) 50vw, 100vw"
-                className="object-cover object-left-top transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.02] motion-reduce:transition-none"
-              />
-              <span className="absolute top-1/2 left-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-ink text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
-                <ArrowUpRight className="size-5" />
-              </span>
-            </div>
-            <div className="flex flex-col gap-1">
-              <h3 className="text-lg leading-[26px] font-medium">{p.name}</h3>
-              <p className="text-sm leading-[22px] text-muted">{p.summary}</p>
-            </div>
-            <ul aria-label={`${p.name} stack`} className="flex flex-wrap gap-2">
-              {p.stack.map((t) => (
-                <li key={t} className="rounded-full bg-well px-3 py-1 text-xs leading-5">
-                  {t}
-                </li>
-              ))}
-            </ul>
-          </Link>
-        ))}
+    <section id="work" className="bg-accent-soft">
+      <div className={`${wrap} flex flex-col gap-10 py-16 md:gap-12 md:py-30`}>
+        <h2 className={h2}>Selected work</h2>
+        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-12 lg:gap-x-6 lg:gap-y-14">
+          {work.map((p, i) => (
+            <Link key={p.slug} href={`/work/${p.slug}`} prefetch={true} className={`group flex flex-col gap-4 ${span[i]}`}>
+              <div className="relative h-[240px] overflow-hidden rounded-2xl bg-well md:h-[340px] lg:h-[420px]">
+                <Image
+                  src={p.images.card.src}
+                  alt={p.images.card.alt}
+                  fill
+                  sizes="(min-width: 1024px) 60vw, (min-width: 768px) 50vw, 100vw"
+                  className="object-cover object-left-top transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.02] motion-reduce:transition-none"
+                />
+                <span className="absolute top-1/2 left-1/2 flex size-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full bg-accent text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                  <ArrowUpRight className="size-5" />
+                </span>
+              </div>
+              <div className="flex flex-col items-start gap-1">
+                <span className="rounded-full bg-white px-2.5 py-0.5 text-xs leading-5 font-medium text-accent-strong">{p.kind}</span>
+                <h3 className="text-lg leading-[26px] font-medium">{p.name}</h3>
+                <p className="text-sm leading-[22px] text-muted">{p.summary}</p>
+              </div>
+              <ul aria-label={`${p.name} stack`} className="flex flex-wrap gap-2">
+                {p.stack.map((t) => (
+                  <li key={t} className="rounded-full bg-white px-3 py-1 text-xs leading-5">
+                    {t}
+                  </li>
+                ))}
+              </ul>
+            </Link>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -257,7 +323,7 @@ function SecurityAndRelease() {
           <ol className="flex flex-col gap-6">
             {releaseChecks.map((r, i) => (
               <li key={r.step} className="grid grid-cols-[40px_minmax(0,1fr)] gap-4">
-                <span className="text-[28px] leading-8 font-light tracking-[-0.02em] text-muted tabular-nums">
+                <span className="text-[28px] leading-8 font-light tracking-[-0.02em] text-accent tabular-nums">
                   {i + 1}
                 </span>
                 <div className="flex flex-col gap-1">

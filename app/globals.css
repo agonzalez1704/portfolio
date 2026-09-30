@@ -8,8 +8,19 @@
   --color-line: #e6e6e6;
   --color-rule: #dadada;
   --color-well: #ececec;
+  --color-accent: #6e56cf;
+  --color-accent-strong: #5b45b8;
+  --color-accent-soft: #f3f0ff;
+  --color-accent-tint: #e4ddff;
   --font-sans: var(--font-geist), "Helvetica Neue", Arial, sans-serif;
   --font-mono: var(--font-geist-mono), Menlo, monospace;
+  --animate-spin-slow: spin-slow 24s linear infinite;
+
+  @keyframes spin-slow {
+    to {
+      transform: rotate(360deg);
+    }
+  }
 }
 
 html {

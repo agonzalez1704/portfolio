@@ -63,8 +63,8 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
             </div>
           </dl>
           {p.rewrite && (
-            <p className="flex max-w-[860px] gap-3 rounded-2xl bg-white p-5 text-[15px] leading-6 text-body">
-              <GitBranch aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-ink" />
+            <p className="flex max-w-[860px] gap-3 rounded-2xl bg-accent-soft p-5 text-[15px] leading-6 text-body">
+              <GitBranch aria-hidden="true" className="mt-0.5 size-5 shrink-0 text-accent-strong" />
               <span>
                 {p.rewrite.note} <span className="font-mono text-[13px] text-ink">{p.rewrite.branch}</span>
               </span>
@@ -116,7 +116,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
           <section className={`${wrap} ${p.pipeline ? "pb-16 md:pb-30" : ""}`}>
             <div className="flex flex-col gap-10 rounded-3xl bg-ink p-7 text-paper md:gap-14 md:p-12 lg:p-18">
               <div className="flex max-w-[760px] flex-col gap-5">
-                <span className="flex items-center gap-2 text-sm text-[#bdbdbd]">
+                <span className="flex items-center gap-2 text-sm text-[#c9bfff]">
                   <Sparkle aria-hidden="true" className="size-4" />
                   {p.spotlight.eyebrow}
                 </span>
@@ -154,7 +154,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
           <ul className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {p.integrations.map((i) => (
               <li key={i.name} className="flex gap-4 rounded-2xl bg-white p-5 md:p-6">
-                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-paper">
+                <span className="flex size-10 shrink-0 items-center justify-center rounded-full bg-accent-soft text-accent-strong">
                   <TechIcon label={i.name} className="size-5" />
                 </span>
                 <div className="flex flex-col gap-1">
@@ -246,7 +246,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
               <ol className={`grid gap-6 ${p.security.length ? "" : "md:grid-cols-2 md:gap-x-12"}`}>
                 {p.release.map((r, i) => (
                   <li key={r.text} className="grid grid-cols-[40px_minmax(0,1fr)] gap-4">
-                    <span className="text-[28px] leading-8 font-light tracking-[-0.02em] text-muted tabular-nums">
+                    <span className="text-[28px] leading-8 font-light tracking-[-0.02em] text-accent tabular-nums">
                       {i + 1}
                     </span>
                     <div className="flex flex-col items-start gap-2 pt-1">
@@ -283,7 +283,7 @@ export default async function CaseStudy({ params }: PageProps<"/work/[slug]">) {
                 {next.name}
               </span>
             </span>
-            <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-ink text-white transition-transform group-hover:scale-105 md:size-20">
+            <span className="flex size-16 shrink-0 items-center justify-center rounded-full bg-accent text-white transition-transform group-hover:scale-105 md:size-20">
               <ArrowUpRight className="size-6" />
             </span>
           </Link>
@@ -307,7 +307,7 @@ function RewriteBadge({ dark }: { dark?: boolean }) {
   return (
     <span
       className={`inline-flex items-center gap-1.5 self-start rounded-full border px-2.5 py-0.5 text-xs leading-5 ${
-        dark ? "border-[#5a5a5a] text-[#d4d4d4]" : "border-rule text-body"
+        dark ? "border-[#7d6bd9] text-[#d9d2ff]" : "border-accent-tint bg-accent-soft text-accent-strong"
       }`}
     >
       <GitBranch aria-hidden="true" className="size-3.5" />
@@ -337,7 +337,7 @@ function Node({ n }: { n: FlowNode }) {
   return (
     <div
       className={`flex min-h-20 flex-col items-center justify-center rounded-[14px] px-4 py-2 text-center text-[15px] leading-[22px] ${
-        n.check ? "border-[1.5px] border-ink bg-white" : "bg-white"
+        n.check ? "border-[1.5px] border-accent bg-white" : "bg-white"
       }`}
     >
       <span className="font-medium">{n.title}</span>
@@ -354,7 +354,7 @@ function Architecture({ p }: { p: Project }) {
         <div className="flex flex-col gap-4">
           <h2 className={h2}>{title}</h2>
           <p className="max-w-[640px] text-base leading-[26px] text-body">
-            Outlined boxes are where the system protects itself. The lower row shows what else enters the flow.
+            Violet boxes are where the system protects itself. The lower row shows what else enters the flow.
           </p>
         </div>
         <div className="flex flex-col gap-3 lg:grid lg:grid-cols-[repeat(4,minmax(0,1fr))] lg:gap-x-24 lg:gap-y-0">
@@ -441,7 +441,7 @@ function Pipeline({ pipeline }: { pipeline: NonNullable<Project["pipeline"]> }) 
                     <Image src={st.src} alt={st.alt} fill sizes="(min-width: 768px) 30vw, 50vw" className="object-cover" />
                   </div>
                   <span className="flex items-baseline gap-2 text-[13px] leading-5">
-                    <span className="text-muted tabular-nums">{i + 1}</span>
+                    <span className="text-accent tabular-nums">{i + 1}</span>
                     {st.caption}
                   </span>
                 </li>

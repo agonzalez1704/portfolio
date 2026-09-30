@@ -37,13 +37,14 @@ export function SiteHeader({ active }: { active?: string }) {
           </Link>
         ))}
       </nav>
-      <Link
-        href="/#contact"
-        className="hidden h-11 items-center gap-1.5 text-sm font-medium underline underline-offset-4 md:flex"
+      <a
+        href={profile.cvPath}
+        download
+        className="hidden h-11 items-center gap-1.5 text-sm font-medium text-accent underline underline-offset-4 hover:text-accent-strong md:flex"
       >
-        Get in touch
+        Download CV
         <ArrowUpRight />
-      </Link>
+      </a>
       {/* Native disclosure: no client JS for the phone menu. */}
       <details className="group relative md:hidden">
         <summary

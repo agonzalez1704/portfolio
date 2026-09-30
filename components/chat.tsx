@@ -113,7 +113,7 @@ function ChatPanel({
           return m.role === "user" ? (
             <p
               key={m.id}
-              className="max-w-[300px] self-end rounded-[18px] rounded-br-[4px] bg-ink px-4 py-3 text-[15px] leading-[23px] text-white"
+              className="max-w-[300px] self-end rounded-[18px] rounded-br-[4px] bg-accent px-4 py-3 text-[15px] leading-[23px] text-white"
             >
               {text}
             </p>
@@ -157,7 +157,7 @@ function ChatPanel({
               key={s}
               type="button"
               onClick={() => send(s)}
-              className="h-9 rounded-full border border-rule px-3.5 text-[13px] hover:border-ink"
+              className="h-9 rounded-full border border-accent-tint bg-accent-soft px-3.5 text-[13px] text-accent-strong hover:border-accent"
             >
               {s}
             </button>
@@ -191,7 +191,7 @@ function ChatPanel({
           type="submit"
           aria-label="Send question"
           disabled={busy || full || !draft.trim()}
-          className="flex size-[52px] shrink-0 items-center justify-center rounded-full bg-ink text-white active:scale-95 disabled:opacity-40"
+          className="flex size-[52px] shrink-0 items-center justify-center rounded-full bg-accent text-white hover:bg-accent-strong active:scale-95 disabled:opacity-40"
         >
           <ArrowUp className="size-4.5" />
         </button>
@@ -222,7 +222,7 @@ export function AskBanner() {
         setQ("");
       }}
     >
-      <label htmlFor="ask" className="text-sm text-[#bdbdbd]">
+      <label htmlFor="ask" className="text-sm text-white/85">
         Your question
       </label>
       <div className="flex gap-2">
@@ -233,12 +233,12 @@ export function AskBanner() {
           maxLength={CHAT_MAX_CHARS}
           placeholder={suggestions[2]}
           autoComplete="off"
-          className="h-14 min-w-0 flex-1 rounded-full border border-[#454545] bg-[#2f2f2f] px-6 text-base text-paper placeholder:text-[#9a9a9a] focus:border-paper focus:outline-none"
+          className="h-14 min-w-0 flex-1 rounded-full border border-white/30 bg-white/15 px-6 text-base text-white placeholder:text-white/75 focus:border-white focus:outline-none"
         />
         <button
           type="submit"
           aria-label="Send question"
-          className="flex size-14 shrink-0 items-center justify-center rounded-full bg-paper text-ink active:scale-95"
+          className="flex size-14 shrink-0 items-center justify-center rounded-full bg-white text-accent-strong active:scale-95"
         >
           <ArrowUp className="size-4.5" />
         </button>
@@ -249,7 +249,7 @@ export function AskBanner() {
             key={s}
             type="button"
             onClick={() => ask(s)}
-            className="h-9 rounded-full border border-[#454545] px-4 text-[13px] text-[#e0e0e0] hover:border-paper"
+            className="h-9 rounded-full border border-white/40 px-4 text-[13px] text-white hover:bg-white/10"
           >
             {s}
           </button>

@@ -16,7 +16,7 @@ export function SiteFooter() {
           </nav>
           <a
             href={`mailto:${contact.email}`}
-            className="text-[22px] leading-7 font-light tracking-tight break-all sm:text-3xl lg:text-[44px] lg:leading-12"
+            className="text-[22px] leading-7 font-light tracking-tight break-all hover:text-accent-tint sm:text-3xl lg:text-[44px] lg:leading-12"
           >
             {contact.email}
           </a>
