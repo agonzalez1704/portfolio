@@ -50,3 +50,102 @@ html {
 section[id] {
   scroll-margin-top: 24px;
 }
+
+/* Split-flap board (hero wordmark). Sizes derive from one tile unit --t. */
+.sf-board {
+  --t: min(calc((100vw - 32px) / 8), 72px);
+  --gap: calc(var(--t) * 0.12);
+  display: flex;
+  gap: var(--gap);
+  perspective: 400px;
+  width: max-content;
+  max-width: 100%;
+  cursor: pointer;
+  user-select: none;
+}
+.sf-board:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: calc(var(--t) * 0.14);
+  border-radius: calc(var(--t) * 0.24);
+}
+@media (min-width: 1024px) {
+  .sf-board { --t: 76px; }
+}
+.sf-tile {
+  box-sizing: border-box;
+  width: var(--t);
+  padding: calc(var(--t) * 0.08);
+  border-radius: calc(var(--t) * 0.2);
+  background: linear-gradient(#1d1d21, #0b0b0d);
+  box-shadow:
+    0 calc(var(--t) * 0.04) calc(var(--t) * 0.12) rgb(11 11 13 / 0.32),
+    0 calc(var(--t) * 0.01) calc(var(--t) * 0.03) rgb(11 11 13 / 0.4),
+    inset 0 1px 0 rgb(255 255 255 / 0.06);
+}
+.sf-face {
+  position: relative;
+  width: calc(var(--t) * 0.84);
+  height: calc(var(--t) * 1.2);
+  transform-style: preserve-3d;
+}
+.sf-static,
+.sf-flap {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: calc(var(--t) * 0.6);
+  overflow: hidden;
+  backface-visibility: hidden;
+}
+.sf-static.top,
+.sf-flap.top {
+  top: 0;
+  border-radius: calc(var(--t) * 0.1) calc(var(--t) * 0.1) 0 0;
+  background: linear-gradient(#2f2f35, #2b2b30);
+}
+.sf-static.bottom,
+.sf-flap.bottom {
+  top: calc(var(--t) * 0.6);
+  border-radius: 0 0 calc(var(--t) * 0.1) calc(var(--t) * 0.1);
+  background: linear-gradient(#262629, #232327);
+}
+.sf-flap.top { transform-origin: bottom center; z-index: 2; }
+.sf-flap.bottom { transform-origin: top center; transform: rotateX(90deg); z-index: 2; }
+.sf-glyph {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: calc(var(--t) * 1.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(var(--t) * 0.92);
+  line-height: 1;
+  color: #d8d8de;
+  text-shadow: 0 1px 1px rgb(0 0 0 / 0.5);
+}
+.sf-static.top .sf-glyph,
+.sf-flap.top .sf-glyph { top: 0; }
+.sf-static.bottom .sf-glyph,
+.sf-flap.bottom .sf-glyph { top: calc(var(--t) * -0.6); }
+/* Seam across the middle, with a hair of accent so settled tiles read warm. */
+.sf-seam {
+  position: absolute;
+  left: 0;
+  top: calc(var(--t) * 0.6 - 1px);
+  width: 100%;
+  height: 2px;
+  background: #0b0b0d;
+  z-index: 3;
+}
+.sf-hinge {
+  position: absolute;
+  top: calc(var(--t) * 0.6 - var(--t) * 0.05);
+  width: calc(var(--t) * 0.05);
+  height: calc(var(--t) * 0.1);
+  border-radius: 999px;
+  background: linear-gradient(#cfd0d6, #8f9098);
+  z-index: 4;
+}
+.sf-hinge.left { left: calc(var(--t) * -0.015); }
+.sf-hinge.right { right: calc(var(--t) * -0.015); }

@@ -6,6 +6,7 @@ import { ArrowUpRight, Check } from "@/components/icons";
 import { CashRegister, MagicWand, Mountains, Sneaker } from "@phosphor-icons/react/dist/ssr";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { SplitFlap } from "@/components/split-flap";
 import { TechChip } from "@/components/tech-icon";
 import { experience, method, profile, releaseChecks, roleChecks, security, sideProjects, toolbox } from "@/content/profile";
 import { getProject } from "@/content/projects";
@@ -65,9 +66,8 @@ function Hero() {
           <Stat value="1,500" label="Commits on four live products" />
         </div>
         <div className="flex flex-col gap-6 lg:mt-auto lg:gap-7">
-          <h1 className="-ml-1 text-[84px] leading-[84px] font-light tracking-[-0.055em] md:text-[128px] md:leading-[120px] lg:-ml-2 lg:text-[160px] lg:leading-[150px]">
-            Antonio
-          </h1>
+          <h1 className="sr-only">Antonio</h1>
+          <SplitFlap word="Antonio" />
           <p className="max-w-[460px] text-lg leading-7 text-[#444] text-pretty md:text-xl md:leading-[30px]">
             {profile.title}. I direct AI coding agents, and I own what they ship.
           </p>
