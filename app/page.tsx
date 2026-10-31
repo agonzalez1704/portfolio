@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { AskBanner, AskLink } from "@/components/chat";
+import { CommitField } from "@/components/commit-field";
 import { ContactForm } from "@/components/contact-form";
 import { ArrowUpRight, Check } from "@/components/icons";
 import { CashRegister, MagicWand, Mountains, Sneaker } from "@phosphor-icons/react/dist/ssr";
@@ -10,6 +11,7 @@ import { SplitFlap } from "@/components/split-flap";
 import { TechChip } from "@/components/tech-icon";
 import { experience, method, profile, releaseChecks, roleChecks, security, sideProjects, toolbox } from "@/content/profile";
 import { getProject } from "@/content/projects";
+import commits from "@/content/commits.json";
 
 const wrap = "mx-auto w-full max-w-[1440px] px-5 md:px-12 xl:px-24";
 const h2 = "text-[32px] leading-9 tracking-[-0.03em] md:text-[40px] md:leading-11";
@@ -18,6 +20,10 @@ const h2 = "text-[32px] leading-9 tracking-[-0.03em] md:text-[40px] md:leading-1
 const work = ["calzado-blade", "auto-toon", "fiable", "grupo-barro-y-cantera"].map((s) => getProject(s)!);
 const span = ["lg:col-span-7", "lg:col-span-5", "lg:col-span-5", "lg:col-span-7"];
 
+// Regenerate with `pnpm commits`; the hero stat and the commit field read the same numbers.
+const totalCommits = commits.reduce((s, p) => s + p.total, 0);
+const blade = commits.find((p) => p.slug === "calzado-blade")!;
+
 export default function Home() {
   return (
     <>
@@ -25,6 +31,7 @@ export default function Home() {
       <main>
         <Hero />
         <LiveProducts />
+        <CommitField products={commits} />
         <About />
         <Work />
         <Method />
@@ -63,7 +70,7 @@ function Hero() {
       <div className="flex flex-col gap-8 pt-6 lg:w-[640px] lg:shrink-0 lg:pt-16 lg:pb-22">
         <div className="flex gap-10 md:gap-14">
           <Stat value="12" label="Years shipping software" />
-          <Stat value="1,500" label="Commits on four live products" />
+          <Stat value={totalCommits.toLocaleString("en-US")} label="Commits on four live products" />
         </div>
         <div className="flex flex-col gap-6 lg:mt-auto lg:gap-7">
           <h1 className="sr-only">Antonio</h1>
@@ -184,7 +191,9 @@ function About() {
           </p>
         </div>
         <div className="flex flex-col gap-5 rounded-2xl bg-accent-soft p-7">
-          <div className="text-[56px] leading-14 font-light tracking-[-0.05em] text-accent md:text-7xl md:leading-18">87%</div>
+          <div className="text-[56px] leading-14 font-light tracking-[-0.05em] text-accent md:text-7xl md:leading-18">
+            {Math.round((blade.ai / blade.total) * 100)}%
+          </div>
           <p className="text-sm leading-[22px] text-body">
             of Calzado Blade commits were co-authored with an AI agent. I reviewed every one.
           </p>
